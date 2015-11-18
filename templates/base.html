@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blog and Notes of Giedrius Kudelis - $title$</title>
+
+    <!-- google web fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Josefin+Sans|Josefin+Slab:700' rel='stylesheet' type='text/css'>
+    <!-- bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc= sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+
+    <!-- blog css -->
+    <link rel="stylesheet" type="text/css" href="/css/default.css" />
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-3 col-sm-push-7 col-sm-offset-1">
+                <h1>gkudelis.github.io</h1>
+                <h2>n: Giedrius Kudelis<br>
+                    t: @gkudelis
+                </h2>
+
+                $partial("templates/post-list.html")$ 
+            </div>
+            <div class="col-sm-7 col-sm-pull-3">
+                $body$
+            </div>
+        </div>
+    </div>
+</body>
+</html>
