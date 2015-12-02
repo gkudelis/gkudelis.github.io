@@ -21,4 +21,6 @@ ul.post-list {
     margin-top: 40px;
 }
 
-
+code {
+    font-size: 70%;
+}

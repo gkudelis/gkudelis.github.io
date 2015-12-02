@@ -101,3 +101,79 @@ And on the client side:
 ```
 socat UDP-LISTEN:5700 OPENSSL:my.rtail.server.com:5333,cafile=/path/to/srv-rtail.crt
 ```
+To set up `rtail` we need to run the client pointing it to the 5333 UDP port:
+```
+rtail --port 5700 --id my-stream-name
+```
+and on the server:
+```
+rtail-server --web-port 5700 --udp-port 5700
+```
+The id on the client side simply helps identify the stream on the web interface. 
+At this point if you point your browser to the port 5700 of the `rtail` server
+you should see the `rtail` web interface. Test by typing things into the input
+stream of the rtail client - it should show up in the web interface under the
+stream called "my-stream-name". If you can't see the web interface or nothing
+comes through double check the firewall settings.
+
+You can now pipe your log files into the `rtail` client from `tail`:
+```
+tail -F /some/log/file | rtail --port 5700 --id some-log-file-stream
+```
+
+### Seting up `supervisor`
+
+The first time setting this up I just left all the `rtail` and `socat` instances
+running in my `tmux` sessions on various servers. Needless to say that's not
+sustainable. The easiest solution I've found was to set up `supervisor` to
+manage these processes.
+
+On the client side we need to run the `socat` instance and as many `rtail`
+clients as we need. For one client the configuration would look something like
+this:
+```
+[program:rtail-client-socat-relay]
+command = socat UDP-LISTEN:5700 OPENSSL:my.rtail.server.com:5333,cafile=/path/to/srv-rtail.crt
+autostart = true
+autorestart = true
+user = nobody
+priority = 900
+
+[program:some-stream-rtail]
+command = /bin/bash -c "tail -F /some/stream/log | /usr/bin/rtail --port 5700 --id some-stream --mute"
+killasgroup = true
+autostart = true
+autorestart = true
+user = some_stream_owner
+```
+Since `socat` needs to authenticate the server make sure the user `nobody` has
+read access to the certificate. In addition to that, the `some_stream_owner`
+user must have read access to the log file. The priority setting defines the
+order in which the processes should be started with the lower-numbered ones
+being started first. The default is 999, so by setting the `socat` connection
+priority to 900 we make it start before `rtail`.
+
+On the server side we open the SSL connection and start the `rtail` server:
+```
+[program:rtail-server]
+command = /usr/local/bin/rtail-server --web-port 5700 --udp-port 5700
+autostart = true
+autorestart = true
+user = nobody
+
+[program:rtail-server-socat-relay]
+command = /usr/bin/socat OPENSSL-LISTEN:5333,fork,reuseaddr,cert=/path/to/srv-rtail.pem,verify=0 UDP:localhost:5700
+autostart = true
+autorestart = true
+user = cert_owner
+```
+The `cert_owner` must have read access to the certificate. The `fork` flag
+for `socat` makes it fork when new connection request is received, create
+a new connection and forward the content to the same UDP port `rtail` is
+listening on. The `verify=0` flag tells `socat` that the client certificates
+don't need to be verified.
+
+If this does not work first make sure running the same commands manually works,
+then check permissions and have a look at the log file produced by `supervisor`.
+It contains details of which processes have started successfully and can help
+debug the configuration.
