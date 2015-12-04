@@ -183,8 +183,8 @@ debug the configuration.
 The last part is setting up `nginx` as a reverse proxy with simple HTTP
 authentication. We tell `nginx` about the `rtail` web service we have running,
 then ask for all requests coming to that domain to be redirected to the rtail
-service subject to authentication. [Here's a good manual on how to generate the
-auth file.](https://www.digitalocean.com/community/tutorials/how-to-set-up-http-authentication-with-nginx-on-ubuntu-12-10)
+service subject to authentication. Here's a good manual on how to generate the
+auth file: [How To Set Up HTTP Authentication With Nginx On Ubuntu 12.10](https://www.digitalocean.com/community/tutorials/how-to-set-up-http-authentication-with-nginx-on-ubuntu-12-10).
 Below is the configuration I ended up with. There is nothing but the auth file
 in the `/avr/www/mydomain.com/rtail/` folder.
 
