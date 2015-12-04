@@ -177,3 +177,40 @@ If this does not work first make sure running the same commands manually works,
 then check permissions and have a look at the log file produced by `supervisor`.
 It contains details of which processes have started successfully and can help
 debug the configuration.
+
+### Setting up `nginx`
+
+The last part is setting up `nginx` as a reverse proxy with simple HTTP
+authentication. We tell `nginx` about the `rtail` web service we have running,
+then ask for all requests coming to that domain to be redirected to the rtail
+service subject to authentication. [Here's a good manual on how to generate the
+auth file.](https://www.digitalocean.com/community/tutorials/how-to-set-up-http-authentication-with-nginx-on-ubuntu-12-10)
+Below is the configuration I ended up with. There is nothing but the auth file
+in the `/avr/www/mydomain.com/rtail/` folder.
+
+```
+upstream rtail {
+    server 127.0.0.1:5700;
+}
+
+server {
+    server_name rtail.mydomain.com;
+
+    auth_basic "My rtail service";
+    auth_basic_user_file /var/www/mydomain.com/rtail/auth;
+
+    location / {
+        proxy_pass http://rtail;
+        proxy_redirect off;
+    }
+
+}
+```
+
+### Final Remarks
+One thing I'd like to see (and quite possibly get involved in myself) is
+creating an option that allows the `rtail` client to send its data using
+standard output. There's really no need to use the UDP stack if we're just
+piping the data through `socat` anyway. On the server side the `socat`
+instances could dump their data into a named pipe that the `rtail` server would
+be listening to. I think this would be a cleaner solution.
