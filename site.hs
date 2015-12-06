@@ -24,13 +24,12 @@ main = hakyll $ do
 
     -- get unchanged versions too for rendering the post list
     match "posts/*" $ version "plain" $ do
+        route $ setExtension "html"
         compile $ getResourceBody
 
-    match "index.html" $ do
-        route idRoute
-        compile $ do
-            getResourceBody
-                >>= applyAsTemplate indexCtx
+    match "index.md" $ do
+        route $ setExtension "html"
+        compile $ pandocCompiler
                 >>= loadAndApplyTemplate "templates/base.html" indexCtx
                 >>= relativizeUrls
 
