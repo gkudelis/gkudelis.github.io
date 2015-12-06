@@ -1,9 +1,7 @@
-$if(posts)$
 <ul class="post-list">
-    $for(posts)$
+    $for(allPosts)$
         <li>
             <a href="$url$">$title$</a> - $date$
         </li>
     $endfor$
 </ul>
-$endif$

@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
-import           Data.Monoid (mappend)
+import           Data.Monoid ((<>))
 import           Hakyll
 
 
@@ -19,20 +19,15 @@ main = hakyll $ do
         route $ setExtension "html"
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/post.html" postCtx
-            >>= saveSnapshot "content"
             >>= loadAndApplyTemplate "templates/base.html" postCtx
             >>= relativizeUrls
 
+    -- get unchanged versions too for rendering the post list
+    match "posts/*" $ version "plain" $ compile $ pandocCompiler
 
     match "index.html" $ do
         route idRoute
         compile $ do
-            posts <- recentFirst =<< loadAllSnapshots "posts/*" "content"
-            let indexCtx =
-                    listField "posts" postCtx (return posts) `mappend`
-                    constField "title" "Home"                `mappend`
-                    defaultContext
-
             getResourceBody
                 >>= applyAsTemplate indexCtx
                 >>= loadAndApplyTemplate "templates/base.html" indexCtx
@@ -40,9 +35,23 @@ main = hakyll $ do
 
     match "templates/*" $ compile templateCompiler
 
-
 --------------------------------------------------------------------------------
+plainPostCtx :: Context String
+plainPostCtx =
+    dateField "date" "%B %e, %Y" <>
+    defaultContext
+
+baseCtx :: Context String
+baseCtx =
+    listField "allPosts" plainPostCtx (recentFirst =<< (loadAll $ "posts/*" .&&. hasVersion "plain"))
+
 postCtx :: Context String
 postCtx =
-    dateField "date" "%B %e, %Y" `mappend`
+    baseCtx <>
+    plainPostCtx
+
+indexCtx :: Context String
+indexCtx =
+    constField "title" "Home" <>
+    baseCtx <>
     defaultContext
