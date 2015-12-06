@@ -23,7 +23,8 @@ main = hakyll $ do
             >>= relativizeUrls
 
     -- get unchanged versions too for rendering the post list
-    match "posts/*" $ version "plain" $ compile $ pandocCompiler
+    match "posts/*" $ version "plain" $ do
+        compile $ getResourceBody
 
     match "index.html" $ do
         route idRoute
@@ -41,17 +42,17 @@ plainPostCtx =
     dateField "date" "%B %e, %Y" <>
     defaultContext
 
-baseCtx :: Context String
-baseCtx =
+postListCtx :: Context String
+postListCtx =
     listField "allPosts" plainPostCtx (recentFirst =<< (loadAll $ "posts/*" .&&. hasVersion "plain"))
 
 postCtx :: Context String
 postCtx =
-    baseCtx <>
+    postListCtx <>
     plainPostCtx
 
 indexCtx :: Context String
 indexCtx =
     constField "title" "Home" <>
-    baseCtx <>
+    postListCtx <>
     defaultContext
