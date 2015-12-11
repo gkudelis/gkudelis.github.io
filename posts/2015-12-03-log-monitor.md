@@ -1,6 +1,7 @@
 ---
 title: Log monitor using socat, rtail, nginx and supervisor
 author: Giedrius
+tags: logging, monitoring, socat, rtail, supervisor, nginx
 ---
 
 ### Intro
@@ -214,3 +215,4 @@ standard output. There's really no need to use the UDP stack if we're just
 piping the data through `socat` anyway. On the server side the `socat`
 instances could dump their data into a named pipe that the `rtail` server would
 be listening to. I think this would be a cleaner solution.
+
