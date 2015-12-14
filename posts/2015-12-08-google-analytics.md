@@ -1,6 +1,5 @@
 ---
 title: Getting Google Analytics
-author: Giedrius
 tags: analytics
 published: true
 ---

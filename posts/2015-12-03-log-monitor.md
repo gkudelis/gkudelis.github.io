@@ -1,6 +1,5 @@
 ---
 title: Log monitor using socat, rtail, nginx and supervisor
-author: Giedrius
 tags: logging, monitoring, socat, rtail, supervisor, nginx
 ---
 

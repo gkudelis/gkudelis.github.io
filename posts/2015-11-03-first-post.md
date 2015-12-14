@@ -1,6 +1,6 @@
 ---
 title: First post
-author: Giedrius
+tags: other
 ---
 
 I've been feeling I should set up a blog for a while now. I do odd projects
