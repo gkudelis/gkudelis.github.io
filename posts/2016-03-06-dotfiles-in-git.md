@@ -20,7 +20,7 @@ repository, `cd` into it, run something like `make install` and have all
 my stuff there.
 
 Currently I only care about my dotfiles for `vim`, `tmux`, `zsh` and `git`. I
-could just symlink the `tmux`, `zsh` and `git` files, but vim would need something
+could just symlink the `tmux`, `zsh` and `git` files, but `vim` would need something
 that could download all the packages. After a quick look I decided it's time
 to switch to using [Vundle](https://github.com/VundleVim/Vundle.vim) as you just have to list all the packages you need
 in your `.vimrc` and Vundle will install/update them for you. The process becomes
@@ -32,7 +32,7 @@ in your `.vimrc` and Vundle will install/update them for you. The process become
 After doing that I noticed that the last step was making `vim` error because of
 a missing colorscheme (which was about to be installed). Changing `colorscheme solarized` to
 `silent! colorscheme solarized` fixed that and I ended up with a non-interactive
-process.
+installation process.
 
 After sorting out installation I realised that because I'm dealing with a number
 of different machines (OSX on my laptop, Linux on the work Vagrant machines) the
