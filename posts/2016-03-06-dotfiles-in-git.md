@@ -1,7 +1,7 @@
 ---
 title: Dotfiles in git
 tags: git
-published: false
+published: true
 ---
 
 TL;DR: I put my dotfiles on GitHub and wrote a `Makefile` that installs it. You
@@ -25,9 +25,9 @@ that could download all the packages. After a quick look I decided it's time
 to switch to using [Vundle](https://github.com/VundleVim/Vundle.vim) as you just have to list all the packages you need
 in your `.vimrc` and Vundle will install/update them for you. The process becomes
 
-    - symlink `.vimrc`,
-    - `git clone` Vundle inside `.vim/bundle`,
-    - run `vim +PluginInstall +qall` to make Vundle download and install all the plugins.
+- symlink `.vimrc`,
+- `git clone` Vundle inside `.vim/bundle`,
+- run `vim +PluginInstall +qall` to make Vundle download and install all the plugins.
 
 After doing that I noticed that the last step was making `vim` error because of
 a missing colorscheme (which was about to be installed). Changing `colorscheme solarized` to
