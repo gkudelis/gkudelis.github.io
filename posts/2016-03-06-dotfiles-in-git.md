@@ -23,7 +23,7 @@ Currently I only care about my dotfiles for `vim`, `tmux`, `zsh` and `git`. I
 could just symlink the `tmux`, `zsh` and `git` files, but `vim` would need something
 that could download all the packages. After a quick look I decided it's time
 to switch to using [Vundle](https://github.com/VundleVim/Vundle.vim) as you just have to list all the packages you need
-in your `.vimrc` and Vundle will install/update them for you. The process becomes
+in your `.vimrc` and Vundle will install/update them for you. The process becomes:
 
 - symlink `.vimrc`,
 - `git clone` Vundle inside `.vim/bundle`,
