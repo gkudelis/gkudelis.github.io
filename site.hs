@@ -47,7 +47,7 @@ main = hakyll $ do
     create ["atom.xml"] $ do
         route idRoute
         compile $ do
-            loadAllSnapshots "posts/*" "styledPost"
+            loadAllSnapshots ("posts/*" .&&. hasNoVersion) "styledPost"
                 >>= fmap (take 10) . recentFirst
                 >>= renderAtom feedConfiguration feedCtx
 
@@ -81,7 +81,8 @@ tagCtx :: String -> Pattern -> Context String
 tagCtx tag pattern =
     constField "title" ("Posts tagged \"" ++ tag ++ "\"") <>
     listField "tagPosts" plainPostCtx (recentFirst =<< loadAll pattern) <>
-    postListCtx
+    postListCtx <>
+    defaultContext
 
 feedCtx :: Context String
 feedCtx =
