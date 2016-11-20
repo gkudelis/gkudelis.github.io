@@ -35,10 +35,8 @@ these commits is identical between the commits even if the author commits
 have different timestamps.
 
 The commits are returned ordered by the commiter timestamp (as this is the
-order they appear in the repository), however, because of the duplication of
+order they appear in the repository). However, because of the duplication of
 timestamps it didn't really fit my purpose. Of course, I could've removed the
 duplicate timestamps, but I felt that wouldn't have been the best
 representation of the activity on the repository. Instead, I decided I'd use
 the author timestamps and simply sort them, which worked really well.
-
-
