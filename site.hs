@@ -26,8 +26,9 @@ main = hakyll $ do
     match "posts/*" $ do
         route $ setExtension "html"
         compile $ pandocCompiler
-            >>= loadAndApplyTemplate "templates/post.html" (postCtx tags)
-            >>= loadAndApplyTemplate "templates/base.html" (postCtx tags)
+            >>= loadAndApplyTemplate "templates/post.html" (fullPostCtx tags)
+            >>= saveSnapshot "styledPost"
+            >>= loadAndApplyTemplate "templates/base.html" (fullPostCtx tags)
             >>= relativizeUrls
 
     -- get unchanged versions too for rendering the post list
@@ -43,6 +44,13 @@ main = hakyll $ do
 
     match "templates/*" $ compile templateCompiler
 
+    create ["atom.xml"] $ do
+        route idRoute
+        compile $ do
+            loadAllSnapshots "posts/*" "styledPost"
+                >>= fmap (take 10) . recentFirst
+                >>= renderAtom feedConfiguration feedCtx
+
 --------------------------------------------------------------------------------
 plainPostCtx :: Context String
 plainPostCtx =
@@ -53,11 +61,15 @@ postListCtx :: Context String
 postListCtx =
     listField "allPosts" plainPostCtx (recentFirst =<< (loadAll $ "posts/*" .&&. hasVersion "plain"))
 
-postCtx :: Tags -> Context String
-postCtx tags =
+taggedPostCtx :: Tags -> Context String
+taggedPostCtx tags =
     tagsField "tags" tags <>
-    postListCtx <>
     plainPostCtx
+
+fullPostCtx :: Tags -> Context String
+fullPostCtx tags =
+    taggedPostCtx tags <>
+    postListCtx
 
 indexCtx :: Context String
 indexCtx =
@@ -69,5 +81,20 @@ tagCtx :: String -> Pattern -> Context String
 tagCtx tag pattern =
     constField "title" ("Posts tagged \"" ++ tag ++ "\"") <>
     listField "tagPosts" plainPostCtx (recentFirst =<< loadAll pattern) <>
-    postListCtx <>
-    defaultContext
+    postListCtx
+
+feedCtx :: Context String
+feedCtx =
+    bodyField "description" <>
+    plainPostCtx
+
+--------------------------------- Feed setup
+
+feedConfiguration :: FeedConfiguration
+feedConfiguration = FeedConfiguration
+    { feedTitle = "Blog of Giedrius Kudelis"
+    , feedDescription = "This is a repository of my projects I find interesting enough to write up"
+    , feedAuthorName = "Giedrius Kudelis"
+    , feedAuthorEmail = "giedrius.kudelis@gmail.com"
+    , feedRoot = "https://gkudelis.github.io"
+    }

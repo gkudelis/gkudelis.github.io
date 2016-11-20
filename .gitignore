@@ -5,3 +5,5 @@ site.hi
 site.o
 _site/
 site.repo/
+.stack-work/
+dist/
