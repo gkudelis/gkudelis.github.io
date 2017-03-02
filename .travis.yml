@@ -1,0 +1,8 @@
+language: haskell
+branches:
+  only:
+    - source
+install:
+  - stack install hakyll
+  - stack build
+script: stack exec site build
