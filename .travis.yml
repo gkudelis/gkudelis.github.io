@@ -13,7 +13,20 @@ before_install:
 install:
   - stack --install-ghc install hakyll
   - stack build
+before_script:
+  - cd _site
+  - git checkout master
+  - git pull origin master
+  - cd ..
 script: stack exec site build
+after_script:
+  - cd _site
+  - git add --all
+  - git config --global user.email "giedrius.kudelis@gmail.com"
+  - git config --global user.name "Travis CI"
+  - git commit -m "Snapshot $(date '+%m/%d/%y %H:%M')"
+  - git push "$REPO_URL" master | grep -v http
+  - cd ..
 group: stable
 dist: precise
 os: linux
