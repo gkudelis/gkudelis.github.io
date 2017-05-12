@@ -25,7 +25,7 @@ after_script:
   - git config --global user.email "giedrius.kudelis@gmail.com"
   - git config --global user.name "Travis CI"
   - git commit -m "Snapshot $(date '+%m/%d/%y %H:%M')"
-  - git push "$REPO_URL" master | grep -v http
+  - git push origin master | grep -v http
   - cd ..
 group: stable
 dist: precise
