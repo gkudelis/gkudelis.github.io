@@ -21,6 +21,7 @@ before_script:
 script: stack exec site build
 after_script:
   - cd _site
+  - echo "$REPO_URL"
   - git status
   - git add --all
   - git config --global user.email "giedrius.kudelis@gmail.com"
