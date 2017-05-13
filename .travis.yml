@@ -21,7 +21,6 @@ before_script:
 script: stack exec site build
 after_script:
   - cd _site
-  - echo "$REPO_URL"
   - git status
   - git add --all
   - git config --global user.email "giedrius.kudelis@gmail.com"
@@ -33,4 +32,6 @@ after_script:
 group: stable
 dist: precise
 os: linux
-secure: "A2nOLX+x+hmx+C/fk3gk9sY/ISOfEU0FxyjfXZATtLOyL2qAOl64uSFdVAZ8PJO+zHB8R5BAgYp69In0Dm9UuUCLFEyuCna3LrxbmExCu9uZl57BGJd+iZFyqfphlmqmggOlycRYEqYUxYtiSSVyTPIMnEaZ0kOziK4xUHCUO7QZ21SYZ+3cCS9lWZaNOvrICna2bvo0hh0E+OUoWpdHLc90IeCgcMd883H4AAeJFtaN+I4lLMhUT28plj4M+s3q/uTBN+jsMVvIu7qcgbpdLT3jslyC2E5LAhgi/+KXkrcIagDd/BlY50V+Lg9WST86BIMLzNWcZUzK2wvKX/qSACIUoS64yuM2kHA8RgKB+Zop/BvaL7E/5cqcI4X3Jd8taAhSw3DUZj5q2oW9IHi/a+SvPKrOpd1dH6MVDJkvroCgjvE1mt4YlFvXEMEYH1lRf/Sf8bacCjdkpqjGdOr5+IGnHl4CcwXbXCXzMfX8lydrfUzqGscxNPDayd5W1r6lWYEhwBC2r3InGaZFXz7XRmpUF9wBfAzlx3uvEENCApYdgr4vDFX7sXqz/oDJCUtrakGdpx1zzecUdB2YZm7U0nZWjs2FnO9EV5SvItjZw67TbdxYtAiOZVXEry/+Hhsdy0OH9BUV92QNviYIjrQNMK3NUxv1Arn5nCRphf0G/oM="
+env:
+  global:
+    - secure: "A2nOLX+x+hmx+C/fk3gk9sY/ISOfEU0FxyjfXZATtLOyL2qAOl64uSFdVAZ8PJO+zHB8R5BAgYp69In0Dm9UuUCLFEyuCna3LrxbmExCu9uZl57BGJd+iZFyqfphlmqmggOlycRYEqYUxYtiSSVyTPIMnEaZ0kOziK4xUHCUO7QZ21SYZ+3cCS9lWZaNOvrICna2bvo0hh0E+OUoWpdHLc90IeCgcMd883H4AAeJFtaN+I4lLMhUT28plj4M+s3q/uTBN+jsMVvIu7qcgbpdLT3jslyC2E5LAhgi/+KXkrcIagDd/BlY50V+Lg9WST86BIMLzNWcZUzK2wvKX/qSACIUoS64yuM2kHA8RgKB+Zop/BvaL7E/5cqcI4X3Jd8taAhSw3DUZj5q2oW9IHi/a+SvPKrOpd1dH6MVDJkvroCgjvE1mt4YlFvXEMEYH1lRf/Sf8bacCjdkpqjGdOr5+IGnHl4CcwXbXCXzMfX8lydrfUzqGscxNPDayd5W1r6lWYEhwBC2r3InGaZFXz7XRmpUF9wBfAzlx3uvEENCApYdgr4vDFX7sXqz/oDJCUtrakGdpx1zzecUdB2YZm7U0nZWjs2FnO9EV5SvItjZw67TbdxYtAiOZVXEry/+Hhsdy0OH9BUV92QNviYIjrQNMK3NUxv1Arn5nCRphf0G/oM="
