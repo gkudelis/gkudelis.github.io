@@ -1,4 +1,4 @@
-Hello! My name is Giedrius Kudelis. I am a software engineer with experience
+Well Hello! My name is Giedrius Kudelis. I am a software engineer with experience
 in web development. I'm interested in data science and machine learning in
 particular, I enjoy learning programming languages and participating in hackathons.
 This site is a repository of projects I find interesting and want to write up
