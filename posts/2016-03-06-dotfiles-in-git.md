@@ -1,7 +1,7 @@
 ---
 title: Dotfiles in git
 tags: git
-published: true
+published: 2016-03-06
 ---
 
 TL;DR: I put my dotfiles on GitHub and wrote a `Makefile` that installs it. You

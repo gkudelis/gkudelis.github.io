@@ -1,7 +1,6 @@
 ---
 title: AstonHack and DrumHub
 tags: webaudio, github
-published: false
 ---
 
 A couple of weeks ago I went along to AstonHack 2016 as part of the Majestic

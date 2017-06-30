@@ -1,7 +1,7 @@
 ---
 title: Getting Google Analytics
 tags: analytics
-published: true
+published: 2015-12-08
 ---
 
 Today I figured I'd like to have some idea if people actually ever visit this
