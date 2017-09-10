@@ -3,3 +3,12 @@ branches:
   only:
     - source
 script: lein build-site
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  local_dir: out
+  fqdn: virtual.gq
+  target_branch: master
+  on:
+    branch: source
