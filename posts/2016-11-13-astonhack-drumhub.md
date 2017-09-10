@@ -1,6 +1,8 @@
 title: AstonHack and DrumHub
 tags: webaudio, github
 
+Stuff here to remove!!!
+
 A couple of weeks ago I went along to AstonHack 2016 as part of the Majestic
 team.  We were mainly there to support the students trying to use Majestic
 API, but were pretty happy to assist them with whatever tech they were having
