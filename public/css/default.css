@@ -1,0 +1,24 @@
+body {
+    font-family: 'Josefin Sans', sans-serif;
+    padding-top: 40px;
+}
+
+h1, h2, h3 {
+    font-family: 'Josefin Slab', serif;
+}
+
+p {
+    font-size: 1.1em;
+}
+
+p.info {
+}
+
+ul.post-list {
+    list-style: none;
+    padding-left: 0px;
+}
+
+code {
+    font-size: 70%;
+}
