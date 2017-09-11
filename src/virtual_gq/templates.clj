@@ -26,7 +26,7 @@
      [:link {:rel "stylesheet"
              :href "/css/default.css"}]]
     [:body
-     [:div.container-fluid
+     [:div.container
       [:div.row
        [:div.col-sm-3.col-sm-push-7.col-sm-offset-1
         [:a {:href "/"} [:h1 "virtual.gq"]]
