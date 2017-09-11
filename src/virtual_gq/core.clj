@@ -107,4 +107,4 @@
 
 (defn export []
   (stasis/empty-directory! (:target-dir conf/blog-config))
-  (stasis/export-pages (output-pages) (:target-dir conf/blog-config)))
+  (stasis/export-pages (output-pages) (:target-dir conf/blog-config) site-context))
