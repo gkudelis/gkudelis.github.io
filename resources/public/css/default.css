@@ -1,6 +1,7 @@
 body {
     font-family: 'Josefin Sans', sans-serif;
     padding-top: 40px;
+    padding-bottom: 40px;
 }
 
 h1, h2, h3 {
@@ -21,4 +22,13 @@ ul.post-list {
 
 code {
     font-size: 70%;
+}
+
+.post-body p {
+    text-align: justify;
+}
+
+.post-body img {
+    display: block;
+    margin: 0 auto;
 }

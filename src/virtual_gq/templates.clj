@@ -1,14 +1,14 @@
 (ns virtual-gq.templates
   (:require [hiccup.page :refer [html5]]))
 
-(defn post-list-partial [posts]
+(defn post-list-partial [post-list]
   [:ul.post-list
    (map (fn [{:keys [title url published]}]
           [:li [:a {:href url} title] " - " published])
-        posts)])
+        post-list)])
 
 (defn base-template
-  [{:keys [title posts] :as context} body]
+  [{:keys [title post-list] :as context} body]
   (html5
     [:head
      [:meta {:charser "utf-8"}]
@@ -31,7 +31,7 @@
        [:div.col-sm-3.col-sm-push-7.col-sm-offset-1
         [:a {:href "/"} [:h1 "virtual.gq"]]
         [:h3 "Posts"]
-        (post-list-partial posts)]
+        (post-list-partial post-list)]
        [:div.col-sm-7.col-sm-pull-3 body]]]]))
 
 (defn page-template

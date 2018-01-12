@@ -33,10 +33,10 @@ case of crashes.
 
 The first thing to get working was `socat`. Once I know the connection works I
 should be able to get `rtail` using it. There's a guide that I followed for
-creating an SSL connection: [Securing Traffic Between two Socat Instances Using
-SSL](http://www.dest-unreach.org/socat/doc/socat-openssltunnel.html). The only
-difference was that I did not want to use SSL for client authentication. That
-allows me to skip having to generate certificates for every client.
+creating an SSL connection: [Securing Traffic Between two Socat Instances Using SSL](http://www.dest-unreach.org/socat/doc/socat-openssltunnel.html).
+The only difference was that I did not want to use SSL for client
+authentication. That allows me to skip having to generate certificates for
+every client.
 
 First step is generating the server key and certificate:
 ```

@@ -3,6 +3,11 @@
             [ring.middleware.content-type :refer [wrap-content-type]]
             [stasis.core :as stasis]
             [markdown.core :refer [md-to-html-string-with-meta]]
+            [optimus.prime :as optimus]
+            [optimus.assets :as assets]
+            [optimus.optimizations :as optimizations]
+            [optimus.strategies :refer [serve-live-assets]]
+            [optimus.export]
             [virtual-gq.conf :as conf]
             [virtual-gq.templates :as t]))
 
@@ -79,14 +84,6 @@
                        (no-r (partial rename-key :html :body))
                        (no-r t/post-template)))))
 
-(def other {"/css/default.css" (slurp "public/css/default.css")})
-
-(defn output-pages []
-  (stasis/merge-page-sources
-    {:pages (pages)
-     :posts (posts)
-     :other other}))
-
 (def post-list
   (->> (stasis/slurp-directory "posts" #"\.md$")
        (map-path html-extension)
@@ -99,12 +96,28 @@
        (reverse)
        (map #(update % :published convert-date))))
 
+(defn get-pages []
+  (stasis/merge-page-sources
+    {:pages (pages)
+     :posts (posts)}))
+
+(defn get-assets []
+  (assets/load-assets "public" ["/css/default.css"
+                                #"/img/.*\.png"]))
+
 (def site-context
   {:conf conf/blog-config
-   :posts post-list})
+   :post-list post-list})
 
-(def app (wrap-content-type (stasis/serve-pages output-pages site-context)))
+(def app (-> (stasis/serve-pages get-pages site-context)
+             (optimus/wrap get-assets optimizations/all serve-live-assets)
+             wrap-content-type))
 
 (defn export []
-  (stasis/empty-directory! (:target-dir conf/blog-config))
-  (stasis/export-pages (output-pages) (:target-dir conf/blog-config) site-context))
+  (let [target-dir (:target-dir conf/blog-config)
+        pages (get-pages)
+        assets (optimizations/all (get-assets) {})
+        export-context (assoc site-context :optimus-assets assets)]
+    (stasis/empty-directory! target-dir)
+    (optimus.export/save-assets assets target-dir)
+    (stasis/export-pages pages target-dir export-context)))
