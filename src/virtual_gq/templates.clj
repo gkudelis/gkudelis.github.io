@@ -44,7 +44,7 @@
   (let [post-body [:div.post-body
                    [:h2 title]
                    [:p.info
-                    "First published: " published [:br]
+                    "Published: " published [:br]
                     "Tags: " tags]
                    body]]
     (base-template context post-body)))
