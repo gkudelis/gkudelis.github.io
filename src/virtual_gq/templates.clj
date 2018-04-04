@@ -16,6 +16,8 @@
              :content "width=device-width, initial-scale=1.0"}]
      [:meta {:name "description"
              :content title}]
+     [:meta {:name "google-site-verification"
+             :content "-8lDYVgEcqM-D64qloHJMmBfCa3uCiL77IsdcW2icX4"}]
      [:title "Blog and Notes of Giedrius Kudelis - " title]
      [:link {:rel "stylesheet"
              :href "https://fonts.googleapis.com/css?family=Josefin+Sans|Josefin+Slab:700"}]
