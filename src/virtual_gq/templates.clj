@@ -31,7 +31,7 @@
      [:div.container
       [:div.row
        [:div.col-sm-3.col-sm-push-7.col-sm-offset-1
-        [:a {:href "/"} [:h1 "virtual.gq"]]
+        [:a {:href "/"} [:h1 "gkudelis.net"]]
         [:h3 "Posts"]
         (post-list-partial post-list)]
        [:div.col-sm-7.col-sm-pull-3 body]]]]))
