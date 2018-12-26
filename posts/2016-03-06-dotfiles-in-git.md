@@ -1,6 +1,8 @@
+---
 title: Dotfiles in git
 tags: git
 published: 2016-03-06
+---
 
 TL;DR: I put my dotfiles on GitHub and wrote a `Makefile` that installs it. You
 can find it all in [gkudelis/dotfiles](https://github.com/gkudelis/dotfiles).

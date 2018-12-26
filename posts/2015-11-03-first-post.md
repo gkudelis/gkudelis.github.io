@@ -1,6 +1,8 @@
+---
 title: First post
 tags: other
 published: 2015-11-03
+---
 
 I've been feeling I should set up a blog for a while now. I do odd projects
 from time to time and before this I had no place to document them. Well, while

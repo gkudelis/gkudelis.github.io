@@ -1,6 +1,8 @@
+---
 title: Log monitor using socat, rtail, nginx and supervisor
 tags: logging, monitoring, socat, rtail, supervisor, nginx
 published: 2015-12-03
+---
 
 ### Intro
 
@@ -33,10 +35,10 @@ case of crashes.
 
 The first thing to get working was `socat`. Once I know the connection works I
 should be able to get `rtail` using it. There's a guide that I followed for
-creating an SSL connection: [Securing Traffic Between two Socat Instances Using SSL](http://www.dest-unreach.org/socat/doc/socat-openssltunnel.html).
-The only difference was that I did not want to use SSL for client
-authentication. That allows me to skip having to generate certificates for
-every client.
+creating an SSL connection: [Securing Traffic Between two Socat Instances Using
+SSL](http://www.dest-unreach.org/socat/doc/socat-openssltunnel.html). The only
+difference was that I did not want to use SSL for client authentication. That
+allows me to skip having to generate certificates for every client.
 
 First step is generating the server key and certificate:
 ```
@@ -185,7 +187,7 @@ then ask for all requests coming to that domain to be redirected to the rtail
 service subject to authentication. Here's a good manual on how to generate the
 auth file: [How To Set Up HTTP Authentication With Nginx On Ubuntu 12.10](https://www.digitalocean.com/community/tutorials/how-to-set-up-http-authentication-with-nginx-on-ubuntu-12-10).
 Below is the configuration I ended up with. There is nothing but the auth file
-in the `/var/www/mydomain.com/rtail/` folder.
+in the `/avr/www/mydomain.com/rtail/` folder.
 
 ```
 upstream rtail {

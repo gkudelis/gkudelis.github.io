@@ -1,6 +1,8 @@
+---
 title: AstonHack 2016 and DrumHub
 tags: webaudio, github
 published: 2018-01-12
+---
 
 More than a year ago I went along to AstonHack 2016 as part of the Majestic
 team.  We were mainly there to support the students trying to use Majestic
@@ -50,7 +52,7 @@ and in bursts - there were long periods of very low freaquency, so I added a lim
 to the lowest tempo and chose it to be slower by no more than a factor of 10. The
 resulting function for scaling is then
 
-![BPM Scaling Formula](/img/astonhack-drumhub/bpm-formula.png)
+![BPM Scaling Formula](/images/astonhack-drumhub/bpm-formula.png)
 
 where <var>A</var> is the smallest time period used for one measure (4 beats at
 480 BPM or 0.5 s), <var>v</var> is the factor limiting the lowest tempo
