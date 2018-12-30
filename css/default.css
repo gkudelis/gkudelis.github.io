@@ -22,3 +22,8 @@ ul.post-list {
 code {
     font-size: 70%;
 }
+
+img.formula {
+    display: block;
+    margin: auto;
+}
