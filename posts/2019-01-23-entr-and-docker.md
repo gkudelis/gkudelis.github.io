@@ -2,6 +2,7 @@
 title: Using entr and Docker together for development
 tags: ag, entr, docker
 published: 2019-01-23
+updated: 2019-01-25
 ---
 
 Lately I've found myself using Docker more and more. There's something quite
@@ -39,25 +40,23 @@ The intended way to use this functionality is by wrapping both commands in a
 shell while-true loop, this way the file listing command is used to tell entr
 which of the new files it's supposed to be tracking.
 
-    while true; do
+    while sleep 1; do
     ag -l | entr -cd python -m unittest
     done
-
-You'll notice you can't just kill this using `Ctrl + C` though, the process dies
-only to get started again by the loop. The way to stop it is to use `Ctrl + Z` to
-suspend the process and then kill it using `kill %%`, which terminates the last
-suspended job. If you want more control, you can use the `jobs` command to see
-the jobs you have in that shell and use `kill %x` to kill the job number x (e.g.
-`kill %2` to kill the job that comes up as job number 2 in the output of `jobs`).
 
 So can we use a similar setup to build and run a Docker container? Of course!
 If your container runs some tests and exits or does some other task that
 quickly finishes the only change you have to do is wrap the `docker` command in
-an `sh -c`:
+an `sh -c` or if you're using an up to date version of entr you can use the
+`-s` flag which effectively does the same (my distribution shipped version 3.4
+and the `-s` flag was not available).
 
-    while true; do
-    ag -l | entr -cd sh -c 'docker run --rm $(docker build -q .)'
+    while sleep 1; do
+    ag -l | entr -cds 'docker run --rm $(docker build -q .)'
     done
+
+Note that whether you're using the `-s` flag or the `sh -c` technique the
+command now needs to be quoted to avoid premature shell variable expansion.
 
 However, if you plan to run a development server this way the workflow is a
 little different - now entr should ask the Docker container to terminate, wait
@@ -81,8 +80,8 @@ application as a different PID. It also knows how to handle different signals,
 making it behave as entr would expect. To run your application in a container
 using the init manager you can use
 
-    while true; do
-    ag -l | entr -cdr sh -c 'docker run --rm --init $(docker build -q .)'
+    while sleep 1; do
+    ag -l | entr -cdrs 'docker run --rm --init $(docker build -q .)'
     done
 
 This allows you to have your application built and executed in a container
@@ -97,3 +96,7 @@ flag to have a pseudo-TTY attached and this debuffers the output, but this will
 interfere with entr. The solution is simply to pass the `-u` flag to Python in
 the Dockerfile disabling the default buffering. The above command then works as
 a charm!
+
+I hope you found this post useful. If you have any questions or comments -
+please let me know. I'd also like to thank the author of entr, Eric Radman, for
+his feedback and help with making this post as useful and accurate as possible.

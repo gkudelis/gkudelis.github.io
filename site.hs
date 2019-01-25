@@ -61,15 +61,11 @@ postListCtx :: Context String
 postListCtx =
     listField "allPosts" plainPostCtx (recentFirst =<< (loadAll $ "posts/*" .&&. hasVersion "plain"))
 
-taggedPostCtx :: Tags -> Context String
-taggedPostCtx tags =
-    tagsField "tags" tags <>
-    plainPostCtx
-
 fullPostCtx :: Tags -> Context String
 fullPostCtx tags =
-    taggedPostCtx tags <>
-    postListCtx
+    tagsField "tags" tags <>
+    postListCtx <>
+    plainPostCtx
 
 indexCtx :: Context String
 indexCtx =
