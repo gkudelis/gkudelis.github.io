@@ -70,8 +70,8 @@ if you don't supply a signal handler you basically get a default one assigned
 and as a developer you don't need to worry about correctly handling all the
 different signals your application might receive. Normally these default signal
 handlers do the right thing. However, the way the process with PID 1 is treated
-is a little different - the default signal handlers for "please exit" signals
-doesn't actually terminate the process. If you want your process to listen to
+is a little different - the default handlers for the "please exit" signals
+don't actually terminate the process. If you want your process to listen to
 these signals and exit you have to implement these handlers yourself. Of
 course, that's a bit of a hassle, so since Docker version 1.13 it ships with a
 small and simple init manager (originally called tini) that can be used to wrap
