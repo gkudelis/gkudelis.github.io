@@ -73,7 +73,7 @@ by Boris Smus to figure out how to get the browser to do what I wanted. I also
 threw together a simple UI using [Bootstrap](https://getbootstrap.com/) and a
 photo from [Unsplash](https://unsplash.com/).
 
-You can find the hosted result at [virtual.gq/drumhub](http://virtual.gq/drumhub)
+You can find the hosted result at [gkudelis.net/drumhub](http://gkudelis.net/drumhub)
 and the code at the [GitHub repo](https://github.com/gkudelis/drumhub).
 Pick a GitHub repository, put the username/reponame in the text field and press
 play.  If you're not sure what repository to try I suggest starting with
