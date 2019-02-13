@@ -26,7 +26,7 @@ both the account they want to copy from and the account that's on the receiving
 end and then click a button asking for their albums and songs to be copied. I'd
 have a couple of progress bars to indicate stuff is happening and also a box
 where the application could output some messages to the user explaining what
-it's up to currently. I'm not great with UI, but using Bootstrap I manage to
+it's up to currently. I'm not great with UI, but using Bootstrap I managed to
 put this together:
 
 <img src="/images/spotify-backup/app-layout.png" class="screenshot">
