@@ -14,10 +14,6 @@ p {
 p.info {
 }
 
-.post > p {
-    text-align: justify;
-}
-
 ul.post-list {
     list-style: none;
     padding-left: 0px;
