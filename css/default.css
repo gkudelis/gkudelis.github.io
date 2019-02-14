@@ -27,3 +27,7 @@ img.formula {
     display: block;
     margin: auto;
 }
+
+img.screenshot {
+    width: 100%;
+}
