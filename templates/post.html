@@ -3,9 +3,11 @@
     <h2>$title$</h2>
 
     <p class="info">
-        First published: $date$
-        <br>
-        Tags: $tags$
+        Published: $published$
+        $if(updated)$
+            <br>Updated: $updated$
+        $endif$
+        <br>Tags: $tags$
     </p>
 
     $body$

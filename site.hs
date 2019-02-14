@@ -1,6 +1,10 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
 import           Data.Monoid ((<>))
+import           Data.Maybe (isJust)
+import           Data.Time.Format (formatTime, parseTimeM, defaultTimeLocale)
+import           Data.Time.Clock (UTCTime)
+import           Control.Applicative (Alternative (..))
 import           Hakyll
 
 
@@ -23,7 +27,7 @@ main = hakyll $ do
             >>= loadAndApplyTemplate "templates/base.html" (tagCtx tag pattern)
             >>= relativizeUrls
 
-    match "posts/*" $ do
+    matchMetadata "posts/*" isPublished $ do
         route $ setExtension "html"
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/post.html" (fullPostCtx tags)
@@ -32,7 +36,7 @@ main = hakyll $ do
             >>= relativizeUrls
 
     -- get unchanged versions too for rendering the post list
-    match "posts/*" $ version "plain" $ do
+    matchMetadata "posts/*" isPublished $ version "plain" $ do
         route $ setExtension "html"
         compile $ getResourceBody
 
@@ -54,7 +58,8 @@ main = hakyll $ do
 --------------------------------------------------------------------------------
 plainPostCtx :: Context String
 plainPostCtx =
-    dateField "date" "%e %b, %Y" <>
+    maybeDateField "updated" "updated" "%e %b, %Y" <>
+    dateField "published" "%e %b, %Y" <>
     defaultContext
 
 postListCtx :: Context String
@@ -95,3 +100,25 @@ feedConfiguration = FeedConfiguration
     , feedAuthorEmail = "giedrius.kudelis@gmail.com"
     , feedRoot = "https://gkudelis.net"
     }
+
+-- optional field setup for the update field
+
+maybeField :: String -> (Item a -> Compiler (Maybe String)) -> Context a
+maybeField key f = field key $ \i -> do
+    ms <- f i
+    maybe empty return ms
+
+maybeMetaField :: String -> String -> (String -> Maybe (String)) -> Context a
+maybeMetaField key metakey f = maybeField key $ \i -> do
+    mv <- getMetadataField (itemIdentifier i) metakey
+    return (mv >>= f)
+
+maybeDateField :: String -> String -> String -> Context a
+maybeDateField key metakey format = maybeMetaField key metakey $ \v -> do
+    parsed <- parseTimeM True defaultTimeLocale "%Y-%-m-%-d" v :: Maybe UTCTime
+    return $ formatTime defaultTimeLocale format parsed
+
+--------------------------------- Utility functions
+
+isPublished :: Metadata -> Bool
+isPublished = isJust . lookupString "published"
