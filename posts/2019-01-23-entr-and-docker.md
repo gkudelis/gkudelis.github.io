@@ -2,7 +2,7 @@
 title: Using entr and Docker together for development
 tags: ag, entr, docker
 published: 2019-01-23
-updated: 2019-01-25
+updated: 2019-01-28
 ---
 
 Lately I've found myself using Docker more and more. There's something quite
