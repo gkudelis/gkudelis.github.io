@@ -19,7 +19,7 @@ main = hakyll $ do
         route   idRoute
         compile compressCssCompiler
 
-    tags <- buildTags "posts/*" (fromCapture "tags/*.html")
+    tags <- buildTagsMetadata "posts/*" (fromCapture "tags/*.html") isPublished
     tagsRules tags $ \tag pattern -> do
         route idRoute
         compile $ makeItem ""
@@ -117,6 +117,16 @@ maybeDateField :: String -> String -> String -> Context a
 maybeDateField key metakey format = maybeMetaField key metakey $ \v -> do
     parsed <- parseTimeM True defaultTimeLocale "%Y-%-m-%-d" v :: Maybe UTCTime
     return $ formatTime defaultTimeLocale format parsed
+
+-- build tags for items whose metadata passes a condition
+
+buildTagsMetadata :: MonadMetadata m => Pattern -> (String -> Identifier)
+                  -> (Metadata -> Bool) -> m Tags
+buildTagsMetadata pattern makeId cond = buildTagsWith f pattern makeId
+    where
+        f i = do
+            m <- getMetadata i
+            if cond m then getTags i else return []
 
 --------------------------------- Utility functions
 
