@@ -31,6 +31,13 @@ function for prime numbers. And lastly I'll go through the prime number
 algorithm described by Prof. O'Neill, show how to implement it in Python and
 make a quick performance comparison with the trial division algorithm.
 
+I'd like to take the opportunity to thank my friend [Bram Geron](https://bram.xyz/blog/) for his input
+and help while I was experimenting with some of the different possible
+implemenetations, working through the differences in complexity and learning
+about the different tools out there. At least for me this sort of process
+is way more fun and rewarding when you can share it with others and bounce
+ideas off each other.
+
 ### Generator functions
 
 In Python generator functions are one of the ways to create iterators, which
@@ -72,6 +79,19 @@ then update our values for the two previous items of the sequence.
             yield c
             a = b
             b = c
+
+We can then use it to create a generator object, get the first 10 items using
+`itertools.islice` and print them.
+
+    from itertools import islice
+
+    fs = fibonacci()
+    for f in islice(fs, 10):
+        print(f)
+
+There is more to say about generator functions in Python, including `yield from`
+and sending values back to the generator using the `.send()` method, but this
+will be enough to cover the basics required for the rest of the article.
 
 ### Trial division
 
