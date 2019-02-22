@@ -32,7 +32,7 @@ function for prime numbers. And lastly I'll go through the prime number
 algorithm described by Prof. O'Neill, show how to implement it in Python and
 make a quick performance comparison with the trial division algorithm.
 
-I'd like to take the opportunity to thank my friend [Bram Geron](https://bram.xyz/blog/) for his input
+I also want to thank my friend [Bram Geron](https://bram.xyz/blog/) for his input
 and help while I was experimenting with some of the different possible
 implemenetations, working through the differences in complexity and learning
 about the different tools out there. At least for me this sort of process
