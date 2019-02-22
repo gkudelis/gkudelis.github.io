@@ -95,6 +95,53 @@ will be enough to cover the basics required for the rest of the article.
 
 ### Trial division
 
+Moving on to actually generating some prime numbers - trial division is an
+algorithm that more or less follows from the definition of prime numbers. You
+take a candidate number and check how many numbers divide into it. Of course,
+you can make some optimizations. First of all, if you find a number (other than
+1 or itself) that divides into it you already know it's not a prime number, so
+you don't have to continue and instead move on to the next candidate. Also, if
+you have already found all the prime numbers smaller than the current candidate
+then it's much faster to only check the current candidate for prime factors.
+Lastly, there's no need to check factors larger than the square root of the
+candidate - for every factor greater than the square root there will be one
+that is less.
+
+    def primes_trial_division():
+        primes = []
+        for candidate in count(2):
+            factor_found = False
+            for p in primes:
+                if candidate % p == 0:
+                    factor_found = True
+                    break
+                elif p * p > candidate:
+                    break
+            if not factor_found:
+                yield candidate
+                primes.append(candidate)
+
+Here we start with an empty list of primes and using `itertools.count` start
+counting up starting with 2. We could add 2 to the initial list of primes and
+count up from 3 with a step of 2 and it would create a performance boost.
+However, it's a constant factor improvement and does not affect the time
+complexity. If you are interested in making this more performant you should go
+through the paper linked at the top of this post - the author goes through a
+generalization of the stepping technique called a wheel that can be used to
+further improve constant factors.
+
+For every candidate we iterate over the list of primes we have already found.
+If we find that a prime from our list divides into the current candidate we
+note that we have found a factor and break the loop. In case we find that we've
+started checking primes that are larger than the square root of the candidate
+we break as well - if we haven't come across a factor by then there's no point
+iterating through the rest of the prime list.
+
+Finally, if we see that we haven't found a prime factor of our candidate we
+know that the candidate is in fact a prime number, so we `yield` it and append
+to the list of known primes. Since `count` produces an infinite sequence this
+generator function will produce and infinite sequence of prime numbers as well.
+
 ### Lazy sieve
 
 ### Performance comparison
