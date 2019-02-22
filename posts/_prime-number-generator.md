@@ -107,6 +107,8 @@ Lastly, there's no need to check factors larger than the square root of the
 candidate - for every factor greater than the square root there will be one
 that is less.
 
+    from itertools import count
+
     def primes_trial_division():
         primes = []
         for candidate in count(2):
@@ -139,8 +141,9 @@ iterating through the rest of the prime list.
 
 Finally, if we see that we haven't found a prime factor of our candidate we
 know that the candidate is in fact a prime number, so we `yield` it and append
-to the list of known primes. Since `count` produces an infinite sequence this
-generator function will produce and infinite sequence of prime numbers as well.
+to the list of known primes. Since `itertools.count` produces an infinite
+sequence this generator function will produce and infinite sequence of prime
+numbers as well.
 
 ### Lazy sieve
 
