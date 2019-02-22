@@ -3,13 +3,14 @@ title: Generating prime numbers in Python
 tags: python, generators
 ---
 
-A while ago I read [this fantastic paper](https://www.cs.hmc.edu/~oneill/papers/Sieve-JFP.pdf) by [Melissa E. O'Neill](https://www.cs.hmc.edu/~oneill/) where the author
-explains how the algorithm that is often portrayed in introductory texts on
-functional programming as the lazy functional implementation of Sieve of
-Eratosthenes is actually not the sieve and is actually even worse than trial
-division (testing numbers by checking if any prime already found divides them).
-She then outlines and implements an algorithm that is actually a lazy and
-functional sieve and uses that to show how important the choice of a suitable
+A while ago I read [The Genuine Sieve of Eratosthenes](https://www.cs.hmc.edu/~oneill/papers/Sieve-JFP.pdf) paper by
+[Melissa E. O'Neill](https://www.cs.hmc.edu/~oneill/) where the author explains
+how the algorithm that is often portrayed in introductory texts on functional
+programming as the lazy functional implementation of Sieve of Eratosthenes is
+actually not the sieve and is actually even worse than trial division (testing
+numbers by checking if any prime already found divides them).  She then
+outlines and implements an algorithm that is actually a lazy and functional
+sieve and uses that to show how important the choice of a suitable
 datastructure can be for performance.
 
 After reading the paper I wrote a quick implementation of the algorithm in
