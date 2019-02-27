@@ -1,6 +1,7 @@
 ---
-title: Generating prime numbers in Python
+title: Lazy prime number generator in Python
 tags: python, generators
+published: 2019-02-27
 ---
 
 A while ago I read [The Genuine Sieve of Eratosthenes](https://www.cs.hmc.edu/~oneill/papers/Sieve-JFP.pdf) paper by
@@ -29,8 +30,7 @@ In this post I want to quickly run through the basics of generator functions in
 Python and explain how they can be used to create lazy sequences. Then I'll
 explain how the trial division algorithm works and use it to create a generator
 function for prime numbers. And lastly I'll go through the prime number
-algorithm described by Prof. O'Neill, show how to implement it in Python and
-make a quick performance comparison with the trial division algorithm.
+algorithm described by Prof. O'Neill and show how to implement it in Python.
 
 I also want to thank my friend [Bram Geron](https://bram.xyz/blog/) for his input
 and help while I was experimenting with some of the different possible
@@ -146,6 +146,101 @@ to the list of known primes. Since `itertools.count` produces an infinite
 sequence this generator function will produce and infinite sequence of prime
 numbers as well.
 
+If you're interested in the time complexity there is a great discussion in the
+paper linked to at the top of the post. For trial division it turns out to be
+\\(O(n \\sqrt{n} / (\\log n)^2)\\), where \\(n\\) is the number of candidates
+we want to test.
+
 ### Lazy sieve
 
-### Performance comparison
+To implement a lazy sieve as described by Prof. O'Neill we use the general idea
+of the classic sieve of Eratosthenes algorithm, but whereas the classic sieve
+removes all multiples of all the primes already discovered from a given
+starting set the lazy sieve tries to do as little work upfront as possible.
+The algorithm keeps a map where the values are (maybe empty) lists of prime
+numbers and the key of such list is the number that is the next one divisible
+by the primes in the list. In other words, it maps from numbers to their prime
+factors. This map starts out empty as we don't know any prime numbers yet.
+
+    from itertools import count
+
+    def primes_lazy_sieve():
+        multiples = {}
+        for candidate in count(2):
+            candidate_divisors = multiples.pop(candidate, None)
+            if candidate_divisors is None:
+                yield candidate
+                multiples[candidate * candidate] = [candidate]
+            else:
+                for divisor in candidate_divisors:
+                    multiples.setdefault(candidate + divisor, []).append(divisor)
+
+We again generate our candidates by counting up from 2 and we look up the
+candidate in the map. If the map does not contain the candidate (as in there
+is no such key) it means that it is a prime number (it does not have any prime
+factors other than itself) - in that case we `yield` it and then add it to the
+list of known prime factors for candidate times 2 (in the code above it is
+instead candidate squared, I will explain this later). If the map contains the
+candidate it means it's instead a composite number. We remove the record from
+the map, but the prime divisors get "propagated" up to their next multiple,
+which is the candidate plus the prime. This way every prime we've found is only
+ever in one of the lists at any given time, always assigned to the key that is
+the next multiple of that prime (next with respect to the current candidate).
+
+The reason it is possible to use candidate squared instead of candidate times 2
+is because the candidate times 2 case will already be eliminated since 2 is one
+of its prime factors. The first composite number that would not be eliminated
+by smaller prime factors is candidate squared, so we instead start there.
+
+In her paper Prof. O'Neill the importance of choosing the right data structure
+for the job and shows that using a priority queue yields better time
+complexity. This makes sense - in Haskell the `Data.Map` datastructure is
+[based on binary trees](http://hackage.haskell.org/package/containers-0.6.0.1/docs/Data-Map.html) and so every access incurs an \\(O(\\log n)\\) cost,
+whereas a priority queue offers \\(O(1)\\) access to the first item. In this
+case it's the item with the lowest priority and the only one we need to check
+to figure out if our candidate has any factors. This change of datastructure
+creates a significant performance difference.
+
+Before I started writing this post I tried to implement this suggestion and
+speed up the lazy sieve above using a Python priority queue library called
+`heapq`. To my surprise the complexity increased quite dramatically. After a
+little investigation into why I'm having such different results I looked up
+Haskell's `Data.Map` and realized it's based on binary trees while Python
+dictionaries are hash tables and thus have \\(O(1)\\) time complexity for
+getting, setting and deleting items. Since these are the only operations I'm
+using there's not much that can be done to improve complexity on this front.
+The hashing function that Python uses for positive integers is simply identity,
+so there's not much performance to be gained there either.
+
+Looking at the time complexity of the lazy sieve we see that every candidate
+regardless of whether or not it's a prime number will incur a pop from the map,
+which means there is an \\(O(n)\\) component when looking for all primes less
+than \\(n\\). If the candidate is a prime we add it to the map and if it's a
+composite we iterate over all it's prime factors and add them to the map.
+Instead of thinking about counting the number of factors of composites we can
+consider that every prime candidate will be added to the map and then moved
+\\(n / p\\) times (starting at candidate squared means this number is lower,
+but that's not significant for the time complexity calculation) and each of
+those operations is constant in time. This leads to the same complexity
+calculation as you would have for the classic sieve of Eratosthenes, which
+means that the complexity of the lazy sieve is \\(O(n \\log \\log n)\\). If
+you're interested in the fine details I refer again to the paper by Prof.
+O'Neill where she derives this result.
+
+### The bigger picture
+
+My intention when writing this post was not only to cover basic syntax
+of Python generator functions and run through the lazy sieve algorithm, but
+really to show how generator functions can give us a way to express certain
+lazy algorithms in a very readable and concise way. I know I personally find
+them much easier to follow than the same thing expressed as a class
+implementing the iterable interface. In a lot of ways it's about knowing what
+variables are in scope and who else has access to them. In the case of a
+generator expression it's pretty obvious - regular function scoping rules
+apply, the variables are local and no other code has access to them. In an
+iterable object the answer is "it depends".
+
+Even if you don't see any use for generator functions in the code you're
+writing at the moment I'd suggest having a play with them to get a sense of
+how they work and how to use them. At the very least it will show you another
+way of looking at problems and provide a new way to structure your code.
