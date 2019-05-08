@@ -20,6 +20,10 @@ cabal.sandbox.config
 .stack-work/
 _cache/
 _site/
+target/
 
 ### Vim ###
 *.sw[op]
+
+### OSX ###
+.DS_Store
