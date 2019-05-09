@@ -1,6 +1,7 @@
 ---
 title: Developing for Pebble using Docker
 tags: pebble, docker
+published: 2019-05-09
 ---
 
 A while ago I've come up with an idea for a watch. I thought it would benefit
@@ -10,6 +11,8 @@ easy to code for and have all the functions I needed and quickly settled on the
 Pebble watch. I found a couple (well, my very generous colleague donated them
 to me) and started looking into how to get the toolchain working and put my
 ideas to test.
+
+### Connecting to the Pebble
 
 The main Pebble developer support site that comes up now is called [Pebble
 Developers](https://developer.rebble.io/developer.pebble.com/index.html). You
@@ -23,7 +26,7 @@ looking for an image that would have the Pebble SDK and found
 The next thing I had to do was find a way to connect the Pebble to my Mac. I'd
 assumed (wrongly) that the USB cable used to charge it would serve that
 purpose, but the way to send programs to the watch is via Bluetooth. Reading
-[the `pebble` cli tool documentation](https://developer.rebble.io/developer.pebble.com/guides/tools-and-resources/developer-connection/index.html)
+[the pebble cli tool documentation](https://developer.rebble.io/developer.pebble.com/guides/tools-and-resources/developer-connection/index.html)
 reveals that you need to either connect the Pebble directly to your Mac using
 Bluetooth at which point it should appear as a device inside `/dev/` or you can
 use Developer Connection available through the Android and iOS apps.
@@ -48,31 +51,31 @@ the app might decide your watch needs an update. Once that's done and you have
 connected your Pebble to the app you'll need to follow the directions for
 [turning on Developer Connection](https://developer.rebble.io/developer.pebble.com/guides/tools-and-resources/developer-connection/index.html).
 
-What is truly important here?
-- Docker can make things easy!
-- (factual) app workflow
+### Building and installing an app
 
-What I did:
-- plug in to charge
-- download Pebble app from APKMirror: https://play.google.com/store/apps/details?id=hu.czandor.pebblerebblehelper
-- install from apk
-- skip login
-- click on the refresh icon (top-right corner)
-- select the kind Pebble you have
-- click on your device in the list
-- check the pairing code and pair
-- app can update the watch (photo)
-- go through the watch language/permissions/watchface setup
-- go into settings, enable developer mode
-- go into developer connection, toggle to connect
-- connect your phone to a wifi, connect to same wifi with your laptop
-- get the example application - https://github.com/pebble-examples/simple-analog/
-- pebble build - show using Docker explicitly
-- pebble install --phone=[IP shown in the developer connection screen]
-- the application is on the watch
+Now that the Developer connection is on let's take an example app and install
+it on the watch. A nice example is [the simple-analog
+watchface](https://github.com/pebble-examples/simple-analog/). To clone it run
 
-Might be nice to explain how you could use Docker running on a Linux machine
-and the `--device` flag to skip having to deal with the app completely. I could
-do this at the top, run through the basic stuff of building and installing the
-example application and then go into how to set up the phone connection in case
-you can't get the serial one working.
+    git clone https://github.com/pebble-examples/simple-analog.git
+
+Enter the project folder, then build the app:
+
+    docker run --rm -it -v $PWD:/pebble andredumas/pebble-dev build
+
+If all went well (I get some Python errors, but the build still gets completed)
+take the IP shown in Developer Connection and install the app on your Pebble:
+
+    docker run --rm -it -v $PWD:/pebble andredumas/pebble-dev install --phone=192.168.0.1
+
+This will install the watchface on your Pebble and it should become the current
+watchface. You can follow exactly the same process to build and install apps.
+
+### Alternative connection options
+
+I have to admit that I don't love having to download and install an app from a
+mirror just to use the phone as a WiFi-Bluetooth bridge. I tried setting up
+a Bluetooth serial connection to the Pebble from a Linux machine (hoping I can
+use the `--device` option to `docker run` to pass it through to the container),
+but it just kept disconnecting and I gave up. If you know how to get it
+working - please let me know!
