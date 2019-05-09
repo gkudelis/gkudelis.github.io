@@ -208,7 +208,7 @@ server {
 }
 ```
 
-### Final Remarks
+### Final remarks
 One thing I'd like to see (and quite possibly get involved in myself) is
 creating an option that allows the `rtail` client to send its data using
 standard output. There's really no need to use the UDP stack if we're just
