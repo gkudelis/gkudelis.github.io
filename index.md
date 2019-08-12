@@ -1,6 +1,9 @@
 Hello! My name is Giedrius Kudelis. I am a software engineer with experience
-in web development. I'm interested in data science and machine learning in
-particular, I enjoy learning programming languages and participating in hackathons.
+in full-stack web development. I enjoy learning programming languages
+(exploring Rust at the moment), doing electronics projects (as well as writing
+some embedded code), thinking about human-computer interaction and trying to
+wrap my head around concurrent/parallel computation.
+
 This site is a repository of projects I find interesting and want to write up
 as well as a place to share my contacts.
 
