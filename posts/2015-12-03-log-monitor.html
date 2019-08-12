@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="description" content="Log monitor using socat, rtail, nginx and supervisor">
+    <meta name="majestic-site-verification" content="MJ12_b7bc5078-8873-4f6e-a61b-6a108fa148fe">
+
+    <title>Blog and Notes of Giedrius Kudelis - Log monitor using socat, rtail, nginx and supervisor</title>
+
+    <!-- google web fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans|Josefin+Slab:700" rel="stylesheet" type="text/css">
+    <!-- bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc= sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+
+    <!-- blog css -->
+    <link rel="stylesheet" type="text/css" href="../css/default.css" />
+
+    <!-- MathJax for nice formulas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML" async></script>
+
+    <!-- google analytics -->
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-71163958-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-md-push-8">
+                <a href="../"><h1>gkudelis.net</h1></a>
+
+                <h3>Posts</h3>
+                <ul class="post-list">
+    
+        <li>
+            <span class="date"> 9 May, 2019</span>
+            <a href="../posts/2019-05-09-developing-for-pebble-using-docker.html">Developing for Pebble using Docker</a>
+        </li>
+    
+        <li>
+            <span class="date"> 3 Apr, 2019</span>
+            <a href="../posts/2019-04-03-tock-notifications-in-macos.html">Tock notifications in macOS</a>
+        </li>
+    
+        <li>
+            <span class="date">27 Feb, 2019</span>
+            <a href="../posts/2019-02-27-prime-number-generator.html">Lazy prime number generator in Python</a>
+        </li>
+    
+        <li>
+            <span class="date">23 Jan, 2019</span>
+            <a href="../posts/2019-01-23-entr-and-docker.html">Using entr and Docker together for development</a>
+        </li>
+    
+        <li>
+            <span class="date">12 Jan, 2018</span>
+            <a href="../posts/2018-01-12-astonhack-drumhub.html">AstonHack 2016 and DrumHub</a>
+        </li>
+    
+        <li>
+            <span class="date"> 6 Mar, 2016</span>
+            <a href="../posts/2016-03-06-dotfiles-in-git.html">Dotfiles in git</a>
+        </li>
+    
+        <li>
+            <span class="date"> 8 Dec, 2015</span>
+            <a href="../posts/2015-12-08-google-analytics.html">Getting Google Analytics</a>
+        </li>
+    
+        <li>
+            <span class="date"> 3 Dec, 2015</span>
+            <a href="../posts/2015-12-03-log-monitor.html">Log monitor using socat, rtail, nginx and supervisor</a>
+        </li>
+    
+        <li>
+            <span class="date"> 3 Nov, 2015</span>
+            <a href="../posts/2015-11-03-first-post.html">First post</a>
+        </li>
+    
+</ul>
+
+            </div>
+            <div class="col-md-8 col-md-pull-4">
+                <div class="post">
+
+    <h2>Log monitor using socat, rtail, nginx and supervisor</h2>
+
+    <p class="info">
+        Published:  3 Dec, 2015
+        
+        <br>Tags: <a href="../tags/logging.html">logging</a>, <a href="../tags/monitoring.html">monitoring</a>, <a href="../tags/socat.html">socat</a>, <a href="../tags/rtail.html">rtail</a>, <a href="../tags/supervisor.html">supervisor</a>, <a href="../tags/nginx.html">nginx</a>
+    </p>
+
+    <h3 id="intro">Intro</h3>
+<p>Working as a developer I find myself spending a significant amount of time debugging software. And for debugging web backend software the web server logs can be an incredibly useful tool. For a while I’ve been monitoring my server logs using something like <code>tail -F /var/log/(something)/error_log</code> on the server. However, this is not ideal as I often end up with a bunch of terminal tabs monitoring different logs and swearing every time my connection drops and ssh decides to time out. This could be solved with a combination of <code>autossh</code> and <code>tmux</code>, but I wanted to be able to search the logs and filter using regular expressions. Even more importantly, I wanted to share the power of logs with my colleagues who might not be as enthusiastic about a bunch of terminal tools.</p>
+<p>After finding <code>rtail</code> I realised it covers most of my requirements. It has a client which takes input from STDIN and sends it via network to the <code>rtail</code> server. The server collects the log streams coming from the different clients and serves all of them via HTTP. It allows users to switch between the streams, filter using regex and some other useful stuff.</p>
+<p>My problem with using strainght <code>rtail</code> was the lack of security. The authors say you should use it behind a VPN, but that’s not something I wanted to do. Instead, I decided I’m going to place it behind an <code>nginx</code> reverse proxy to handle authentication and use <code>socat</code> to wrap the UDP packages into an SSL connection as the logs travel between my servers. I ended up using <code>supervisor</code> to make all of these into services that are started at boot and restarted in case of crashes.</p>
+<h3 id="setting-up-socat">Setting up <code>socat</code></h3>
+<p>The first thing to get working was <code>socat</code>. Once I know the connection works I should be able to get <code>rtail</code> using it. There’s a guide that I followed for creating an SSL connection: <a href="http://www.dest-unreach.org/socat/doc/socat-openssltunnel.html">Securing Traffic Between two Socat Instances Using SSL</a>. The only difference was that I did not want to use SSL for client authentication. That allows me to skip having to generate certificates for every client.</p>
+<p>First step is generating the server key and certificate:</p>
+<pre><code>openssl genrsa -out rtail-server.key 1024</code></pre>
+<p>Next create a self-signed certificate:</p>
+<pre><code>openssl req -new -key rtail-server.key -x509 -days 3653 -out rtail-server.crt</code></pre>
+<p>You can safely ignore all the prompts by hitting enter. The next step is generating the .pem file:</p>
+<pre><code>cat rtail-server.key rtail-server.crt &gt;rtail-server.pem</code></pre>
+<p>The .key and .pem files must remain secret. It’s a good idea to make them only readable by you:</p>
+<pre><code>chmod 600 rtail-server.key rtail-server.pem</code></pre>
+<p>The .pem file is used on the <code>rtail</code> server and the .crt is used by every <code>rtail</code> client. Make sure you use something secure (like <code>scp</code>) when moving the .pem file to the server!</p>
+<p>Now we can set up the SSL connection between the two servers and make sure everything works. In my case it did not, turns out there was a firewall blocking the port I wanted to use. After sorting out the firewall everything went smoothly. For the sake of argument let’s say that we’ll be using port 5333 for the SSL connection.</p>
+<p>First you have to set up the server end of the SSL connection:</p>
+<pre><code>socat OPENSSL-LISTEN:5333,fork,reuseaddr,cert=/path/to/srv-rtail.pem,verify=0 STDIO</code></pre>
+<p>Here we’re telling <code>socat</code> we want it to fork for every new client (which means we can send multiple streams to it at the same time), to authenticate itself using the .pem file we generated previously and to not authenticate clients. We connect the stream to STDIO for debugging purposes, but later it will be pointing at the local <code>rtail</code> server. On the client side we run the client version:</p>
+<pre><code>socat STDIO OPENSSL:my.rtail.server.com:5333,cafile=/path/to/srv-rtail.crt</code></pre>
+<p>We’re making <code>socat</code> listen to the STDIO on the client side (which will later be listening to the output of <code>rtail</code> client applications on that server) and stream it to our <code>rtail</code> server via SSL. It will be using the .crt file to authenticate the server. If everything is correct you should be able to type things in on the client side and see them turn up on the server side.</p>
+<h3 id="setting-up-rtail">Setting up <code>rtail</code></h3>
+<p>Now we can get <code>rtail</code> using the SSL connection. If <code>rtail</code> had an option to use STDIO we could just pipe it to/from <code>socat</code>. However, <code>rtail</code> clients communicate with the server via UDP packets - we need to make <code>socat</code> listen to these packets on the client end and reproduce them on the server end. The only change to the above <code>socat</code> setup we replace STDIO with the corresponding UDP setup. Let’s say we’re using the port 5700 for <code>rtail</code> UDP communication. On the server this becomes:</p>
+<pre><code>socat OPENSSL-LISTEN:5333,fork,reuseaddr,cert=/path/to/srv-rtail.pem,verify=0 UDP:localhost:5700</code></pre>
+<p>And on the client side:</p>
+<pre><code>socat UDP-LISTEN:5700 OPENSSL:my.rtail.server.com:5333,cafile=/path/to/srv-rtail.crt</code></pre>
+<p>To set up <code>rtail</code> we need to run the client pointing it to the 5333 UDP port:</p>
+<pre><code>rtail --port 5700 --id my-stream-name</code></pre>
+<p>and on the server:</p>
+<pre><code>rtail-server --web-port 5700 --udp-port 5700</code></pre>
+<p>The id on the client side simply helps identify the stream on the web interface. At this point if you point your browser to the port 5700 of the <code>rtail</code> server you should see the <code>rtail</code> web interface. Test by typing things into the input stream of the rtail client - it should show up in the web interface under the stream called “my-stream-name”. If you can’t see the web interface or nothing comes through double check the firewall settings.</p>
+<p>You can now pipe your log files into the <code>rtail</code> client from <code>tail</code>:</p>
+<pre><code>tail -F /some/log/file | rtail --port 5700 --id some-log-file-stream</code></pre>
+<h3 id="seting-up-supervisor">Seting up <code>supervisor</code></h3>
+<p>The first time setting this up I just left all the <code>rtail</code> and <code>socat</code> instances running in my <code>tmux</code> sessions on various servers. Needless to say that’s not sustainable. The easiest solution I’ve found was to set up <code>supervisor</code> to manage these processes.</p>
+<p>On the client side we need to run the <code>socat</code> instance and as many <code>rtail</code> clients as we need. For one client the configuration would look something like this:</p>
+<pre><code>[program:rtail-client-socat-relay]
+command = socat UDP-LISTEN:5700 OPENSSL:my.rtail.server.com:5333,cafile=/path/to/srv-rtail.crt
+autostart = true
+autorestart = true
+user = nobody
+priority = 900
+
+[program:some-stream-rtail]
+command = /bin/bash -c &quot;tail -F /some/stream/log | /usr/bin/rtail --port 5700 --id some-stream --mute&quot;
+killasgroup = true
+autostart = true
+autorestart = true
+user = some_stream_owner</code></pre>
+<p>Since <code>socat</code> needs to authenticate the server make sure the user <code>nobody</code> has read access to the certificate. In addition to that, the <code>some_stream_owner</code> user must have read access to the log file. The priority setting defines the order in which the processes should be started with the lower-numbered ones being started first. The default is 999, so by setting the <code>socat</code> connection priority to 900 we make it start before <code>rtail</code>.</p>
+<p>On the server side we open the SSL connection and start the <code>rtail</code> server:</p>
+<pre><code>[program:rtail-server]
+command = /usr/local/bin/rtail-server --web-port 5700 --udp-port 5700
+autostart = true
+autorestart = true
+user = nobody
+
+[program:rtail-server-socat-relay]
+command = /usr/bin/socat OPENSSL-LISTEN:5333,fork,reuseaddr,cert=/path/to/srv-rtail.pem,verify=0 UDP:localhost:5700
+autostart = true
+autorestart = true
+user = cert_owner</code></pre>
+<p>The <code>cert_owner</code> must have read access to the certificate. The <code>fork</code> flag for <code>socat</code> makes it fork when new connection request is received, create a new connection and forward the content to the same UDP port <code>rtail</code> is listening on. The <code>verify=0</code> flag tells <code>socat</code> that the client certificates don’t need to be verified.</p>
+<p>If this does not work first make sure running the same commands manually works, then check permissions and have a look at the log file produced by <code>supervisor</code>. It contains details of which processes have started successfully and can help debug the configuration.</p>
+<h3 id="setting-up-nginx">Setting up <code>nginx</code></h3>
+<p>The last part is setting up <code>nginx</code> as a reverse proxy with simple HTTP authentication. We tell <code>nginx</code> about the <code>rtail</code> web service we have running, then ask for all requests coming to that domain to be redirected to the rtail service subject to authentication. Here’s a good manual on how to generate the auth file: <a href="https://www.digitalocean.com/community/tutorials/how-to-set-up-http-authentication-with-nginx-on-ubuntu-12-10">How To Set Up HTTP Authentication With Nginx On Ubuntu 12.10</a>. Below is the configuration I ended up with. There is nothing but the auth file in the <code>/avr/www/mydomain.com/rtail/</code> folder.</p>
+<pre><code>upstream rtail {
+    server 127.0.0.1:5700;
+}
+
+server {
+    server_name rtail.mydomain.com;
+
+    auth_basic &quot;My rtail service&quot;;
+    auth_basic_user_file /var/www/mydomain.com/rtail/auth;
+
+    location / {
+        proxy_pass http://rtail;
+        proxy_redirect off;
+    }
+
+}</code></pre>
+<h3 id="final-remarks">Final remarks</h3>
+<p>One thing I’d like to see (and quite possibly get involved in myself) is creating an option that allows the <code>rtail</code> client to send its data using standard output. There’s really no need to use the UDP stack if we’re just piping the data through <code>socat</code> anyway. On the server side the <code>socat</code> instances could dump their data into a named pipe that the <code>rtail</code> server would be listening to. I think this would be a cleaner solution.</p>
+
+</div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
