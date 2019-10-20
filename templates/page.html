@@ -9,8 +9,8 @@
     <h2>{{ page.title }}</h2>
     <p class="info">
         Published: {{ page.date }}
-        {% if page.updated %}
-            <br>Updated: {{ page.updated }}
+        {% if page.extra.updated %}
+            <br>Updated: {{ page.extra.updated }}
         {% endif %}
         <br>Tags:
         {% for tag in page.taxonomies.tags %}

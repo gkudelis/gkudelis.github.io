@@ -1,8 +1,9 @@
----
-title: AstonHack 2016 and DrumHub
-tags: webaudio, github
-published: 2018-01-12
----
++++
+title = "AstonHack 2016 and DrumHub"
+date = 2018-01-12
+[taxonomies]
+tags = ["webaudio", "github"]
++++
 
 More than a year ago I went along to AstonHack 2016 as part of the Majestic
 team.  We were mainly there to support the students trying to use Majestic

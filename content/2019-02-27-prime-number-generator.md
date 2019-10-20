@@ -1,8 +1,9 @@
----
-title: Lazy prime number generator in Python
-tags: python, generators
-published: 2019-02-27
----
++++
+title = "Lazy prime number generator in Python"
+date = 2019-02-27
+[taxonomies]
+tags = ["python", "generators"]
++++
 
 A while ago I read [The Genuine Sieve of Eratosthenes](https://www.cs.hmc.edu/~oneill/papers/Sieve-JFP.pdf) paper by
 [Melissa E. O'Neill](https://www.cs.hmc.edu/~oneill/) where the author explains

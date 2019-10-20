@@ -1,8 +1,9 @@
----
-title: Tock notifications in macOS
-tags: other
-published: 2019-04-03
----
++++
+title = "Tock notifications in macOS"
+date = 2019-04-03
+[taxonomies]
+tags = ["other"]
++++
 
 Quite a while ago I've come across the concept of tocks on the
 [Beeminder Blog](https://blog.beeminder.com/tocks/) and started using them when

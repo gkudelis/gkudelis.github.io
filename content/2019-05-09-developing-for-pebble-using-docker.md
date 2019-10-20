@@ -1,8 +1,9 @@
----
-title: Developing for Pebble using Docker
-tags: pebble, docker
-published: 2019-05-09
----
++++
+title = "Developing for Pebble using Docker"
+date = 2019-05-09
+[taxonomies]
+tags = ["pebble", "docker"]
++++
 
 A while ago I've come up with an idea for a watch. I thought it would benefit
 from custom hardware, but what I really wanted to do is to quickly make a
