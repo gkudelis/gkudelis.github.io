@@ -6,7 +6,7 @@
     <meta name="description" content="$title$">
     <meta name="majestic-site-verification" content="MJ12_b7bc5078-8873-4f6e-a61b-6a108fa148fe">
 
-    <title>Blog and Notes of Giedrius Kudelis - {% block title %}{% endblock title %}</title>
+    <title>Blog and Notes of Giedrius Kudelis - $title$</title>
 
     <!-- google web fonts -->
     <link href='https://fonts.googleapis.com/css?family=Josefin+Sans|Josefin+Slab:700' rel='stylesheet' type='text/css'>
@@ -39,8 +39,7 @@
                 $partial("templates/post-list.html")$
             </div>
             <div class="col-md-8 col-md-pull-4">
-                {% block content %}
-                {% endblock content %}
+                $body$
             </div>
         </div>
     </div>
