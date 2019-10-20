@@ -14,9 +14,7 @@
         {% endif %}
         <br>Tags:
         {% for tag in page.taxonomies.tags %}
-        <a href="{{ get_taxonomy_url(kind='tags', name=tag) }}">
-            {% if loop.last %}{{ tag }}{% else %}{{ tag }}, {% endif %}
-        </a>
+        <a href="{{ get_taxonomy_url(kind='tags', name=tag) }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}
         {% endfor %}
     </p>
     {{ page.content | safe }}

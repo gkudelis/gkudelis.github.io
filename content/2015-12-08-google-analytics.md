@@ -1,8 +1,9 @@
----
-title: Getting Google Analytics
-tags: analytics
-published: 2015-12-08
----
++++
+title = "Getting Google Analytics"
+date = 2015-12-08
+[taxonomies]
+tags = ["analytics"]
++++
 
 Today I figured I'd like to have some idea if people actually ever visit this
 place and if so - why. Google Analytics can give you visibility of your users

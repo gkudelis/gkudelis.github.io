@@ -1,5 +1,5 @@
 <ul class="post-list">
-    {% for page in pages %}
+    {% for page in pages | reverse %}
     <li>
         <span class="date">{{ page.date }}</span>
         <a href="{{ get_url(path=page.path) }}">{{ page.title }}</a>
