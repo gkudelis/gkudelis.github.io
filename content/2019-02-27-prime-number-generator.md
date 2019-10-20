@@ -1,6 +1,5 @@
 +++
 title = "Lazy prime number generator in Python"
-date = 2019-02-27
 [taxonomies]
 tags = ["python", "generators"]
 +++

@@ -1,6 +1,5 @@
 +++
 title = "Log monitor using socat, rtail, nginx and supervisor"
-date = 2015-12-03
 [taxonomies]
 tags = ["logging", "monitoring", "socat", "rtail", "supervisor", "nginx"]
 +++

@@ -1,6 +1,5 @@
 +++
 title = "Getting Google Analytics"
-date = 2015-12-08
 [taxonomies]
 tags = ["analytics"]
 +++

@@ -1,6 +1,5 @@
 +++
 title = "Tock notifications in macOS"
-date = 2019-04-03
 [taxonomies]
 tags = ["other"]
 +++

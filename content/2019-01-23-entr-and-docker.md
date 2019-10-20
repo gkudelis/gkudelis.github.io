@@ -1,6 +1,5 @@
 +++
 title = "Using entr and Docker together for development"
-date = 2019-01-23
 [taxonomies]
 tags = ["ag", "entr", "docker"]
 [extra]

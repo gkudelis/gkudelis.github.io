@@ -1,6 +1,5 @@
 +++
 title = "Dotfiles in git"
-published = 2016-03-06
 [taxonomies]
 tags = ["git"]
 +++

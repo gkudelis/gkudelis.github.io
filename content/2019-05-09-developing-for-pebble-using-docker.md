@@ -1,6 +1,5 @@
 +++
 title = "Developing for Pebble using Docker"
-date = 2019-05-09
 [taxonomies]
 tags = ["pebble", "docker"]
 +++

@@ -1,6 +1,5 @@
 +++
 title = "AstonHack 2016 and DrumHub"
-date = 2018-01-12
 [taxonomies]
 tags = ["webaudio", "github"]
 +++
