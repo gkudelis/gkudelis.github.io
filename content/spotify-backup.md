@@ -1,7 +1,9 @@
----
-title: Backing up saved albums and songs using Spotify API
-tags: spotify
----
++++
+title = "Backing up saved albums and songs using Spotify API"
+draft = true
+[taxonomies]
+tags = ["spotify"]
++++
 
 Long story short, somebody nicked some authentication tokens for my Spotify
 account. It's tied to my Facebook account and I've done all the things I can
