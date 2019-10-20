@@ -7,7 +7,7 @@
     <meta name="majestic-site-verification" content="MJ12_b7bc5078-8873-4f6e-a61b-6a108fa148fe">
 
     <title>Blog and Notes of Giedrius Kudelis - 
-    Home
+    Dotfiles in git
 </title>
 
     <!-- google web fonts -->
@@ -92,19 +92,53 @@
             </div>
             <div class="col-sm-8 col-sm-pull-4">
                 
-    <p>Hello! My name is Giedrius Kudelis. I am a software engineer with experience
-in full-stack web development. I enjoy learning programming languages
-(exploring Rust at the moment), doing electronics projects (as well as writing
-some embedded code), thinking about human-computer interaction and trying to
-wrap my head around concurrent/parallel computing.</p>
-<p>This site is a repository of projects I find interesting and want to write up
-as well as a place to share my contacts.</p>
-<h3 id="contacts-and-other-links">Contacts and Other Links</h3>
+<div class="post">
+    <h2>Dotfiles in git</h2>
+    <p class="info">
+        Published: 2016-03-06
+        
+        <br>Tags:
+        
+        <a href="http:&#x2F;&#x2F;gkudelis.net&#x2F;tags&#x2F;git&#x2F;">git</a>
+        
+    </p>
+    <p>TL;DR: I put my dotfiles on GitHub and wrote a <code>Makefile</code> that installs it. You
+can find it all in <a href="https://github.com/gkudelis/dotfiles">gkudelis/dotfiles</a>.</p>
+<p>I recently started working for a new company. They're using <a href="https://www.vagrantup.com/">Vagrant</a> to set up
+development environments and one of my first tasks was to sort out some package
+management issues. Long story short, I found myself starting a bunch of new
+machines and next week I'll be starting many more.</p>
+<p>Until now my process for getting my dotfiles onto a new machine involved a USB
+stick, but it's definitely not the way to go if you need to do it more than
+once a month. I decided to put my dotfiles on <a href="https://github.com/">GitHub</a> and sort out some sort
+of installation script to make it all easier. Ideally I'd just clone the
+repository, <code>cd</code> into it, run something like <code>make install</code> and have all
+my stuff there.</p>
+<p>Currently I only care about my dotfiles for <code>vim</code>, <code>tmux</code>, <code>zsh</code> and <code>git</code>. I
+could just symlink the <code>tmux</code>, <code>zsh</code> and <code>git</code> files, but <code>vim</code> would need something
+that could download all the packages. After a quick look I decided it's time
+to switch to using <a href="https://github.com/VundleVim/Vundle.vim">Vundle</a> as you just have to list all the packages you need
+in your <code>.vimrc</code> and Vundle will install/update them for you. The process becomes:</p>
 <ul>
-<li>twitter: <a target="_blank" href="https://twitter.com/gkudelis">@gkudelis</a></li>
-<li>linkedin: <a target="_blank" href="https://uk.linkedin.com/in/gkudelis">gkudelis</a></li>
+<li>symlink <code>.vimrc</code>,</li>
+<li><code>git clone</code> Vundle inside <code>.vim/bundle</code>,</li>
+<li>run <code>vim +PluginInstall +qall</code> to make Vundle download and install all the plugins.</li>
 </ul>
+<p>After doing that I noticed that the last step was making <code>vim</code> error because of
+a missing colorscheme (which was about to be installed). Changing <code>colorscheme solarized</code> to
+<code>silent! colorscheme solarized</code> fixed that and I ended up with a non-interactive
+installation process.</p>
+<p>After sorting out installation I realised that because I'm dealing with a number
+of different machines (OSX on my laptop, Linux on the work Vagrant machines) the
+dotfiles need to be slightly different (mostly differences in paths). My
+solution was to keep a branch for each of the different environments and have a
+master branch where changes to be applied to all branches would go. The
+specific branches can then be rebased onto the last commit of the master
+branch to bring in those general changes.</p>
+<p>P.S. The morning after setting this up I found <a href="https://dotfiles.github.io/">GitHub does dotfiles</a>. If you're
+interested in setting this up for yourself you should go read that first.</p>
 
+</div>
 
             </div>
         </div>
