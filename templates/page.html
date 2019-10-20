@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ page.title }}
+{% endblock title %}
+
+{% block posts %}
+    {% set pages = [] %}
+    {% include "post-list.html" %}
+{% endblock posts %}
+
+{% block content %}
+<div class="post">
+    <h2>{{ page.title }}</h2>
+    <p class="info">
+        Published: {{ page.date }}
+        {% if page.updated %}
+            <br>Updated: {{ page.updated }}
+        {% endif %}
+        <br>Tags:
+        {% for tag in page.taxonomies.tags %}
+        <a href="{{ get_taxonomy_url(kind='tags', name=tag) }}">
+            {% if loop.last %}{{ tag }}{% else %}{{ tag }}, {% endif %}
+        </a>
+        {% endfor %}
+    </p>
+    {{ page.content | safe }}
+</div>
+{% endblock content %}

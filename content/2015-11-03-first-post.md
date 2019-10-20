@@ -1,6 +1,6 @@
 +++
 title = "First post"
-published = "2015-11-03"
+date = 2015-11-03
 [taxonomies]
 tags = ["other"]
 +++

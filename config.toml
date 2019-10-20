@@ -13,7 +13,7 @@ highlight_theme = "solarized-dark"
 build_search_index = false
 
 taxonomies = [
-    { name: "tags" },
+    { name = "tags" },
 ]
 
 [extra]

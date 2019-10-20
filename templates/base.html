@@ -36,7 +36,8 @@
                 <a href="/"><h1>gkudelis.net</h1></a>
 
                 <h3>Posts</h3>
-                $partial("templates/post-list.html")$
+                {% block posts %}
+                {% endblock posts %}
             </div>
             <div class="col-md-8 col-md-pull-4">
                 {% block content %}
