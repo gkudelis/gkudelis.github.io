@@ -4,11 +4,6 @@
     {{ section.title }}
 {% endblock title %}
 
-{% block posts %}
-    {% set pages = section.pages %}
-    {% include "post-list.html" %}
-{% endblock posts %}
-
 {% block content %}
     {{ section.content | safe }}
 {% endblock content %}

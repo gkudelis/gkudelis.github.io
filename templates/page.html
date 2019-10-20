@@ -4,11 +4,6 @@
     {{ page.title }}
 {% endblock title %}
 
-{% block posts %}
-    {% set pages = [] %}
-    {% include "post-list.html" %}
-{% endblock posts %}
-
 {% block content %}
 <div class="post">
     <h2>{{ page.title }}</h2>

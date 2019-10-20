@@ -32,14 +32,15 @@
 <body>
     <div class="container">
         <div class="row">
-            <div class="col-md-4 col-md-push-8">
+            <div class="col-sm-4 col-sm-push-8">
                 <a href="/"><h1>gkudelis.net</h1></a>
 
                 <h3>Posts</h3>
-                {% block posts %}
-                {% endblock posts %}
+                {% set top_section = get_section(path="_index.md") %}
+                {% set pages = top_section.pages %}
+                {% include "post-list.html" %}
             </div>
-            <div class="col-md-8 col-md-pull-4">
+            <div class="col-sm-8 col-sm-pull-4">
                 {% block content %}
                 {% endblock content %}
             </div>

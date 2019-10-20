@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ term.name }}
+{% endblock title %}
+
+{% block content %}
+    <h2>{{ term.name }}</h2>
+    {% set pages = term.pages %}
+    {% include "post-list.html" %}
+{% endblock content %}
