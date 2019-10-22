@@ -28,13 +28,15 @@ One of the easiest things that make sense to implement recursively is the `all`
 function that takes an iterator and a predicate function and checks that all
 the items in the iterator match the predicate.
 
-    fn all<I, P>(mut items: I, predicate: P) -> bool
-    where
-        I: Iterator,
-        P: Fn(I::Item) -> bool,
-    {
-        unimplemented!()
-    }
+```rust
+fn all<I, P>(mut items: I, predicate: P) -> bool
+where
+    I: Iterator,
+    P: Fn(I::Item) -> bool,
+{
+    unimplemented!()
+}
+```
 
 The recursive implementation of `all` is simple - if the predicate is false for
 the next item of the iterator then `all` should return false. If it is true
@@ -42,22 +44,24 @@ then we need to repeat the same action on the rest of the iterator until the
 iterator is empty, at which point we can say that the predicate is true for
 all the items.
 
-    fn all<I, P>(mut items: I, predicate: P) -> bool
-    where
-        I: Iterator,
-        P: Fn(I::Item) -> bool,
-    {
-        match items.next() {
-            Some(item) => {
-                if predicate(item) {
-                    all(items, predicate)
-                } else {
-                    false
-                }
+```rust
+fn all<I, P>(mut items: I, predicate: P) -> bool
+where
+    I: Iterator,
+    P: Fn(I::Item) -> bool,
+{
+    match items.next() {
+        Some(item) => {
+            if predicate(item) {
+                all(items, predicate)
+            } else {
+                false
             }
-            None => true,
         }
+        None => true,
     }
+}
+```
 
 It is clear that in this case `all` could take advantage of tail-call
 optimisation as the result of the recursive call is returned as-is.
@@ -68,10 +72,12 @@ consumes memory. Eventually, that leads to a stack overflow. A quick test to
 show it failing:
 
 
-    #[test]
-    fn long_sequence() {
-        assert!(!all(0.., |x| x < 1_000_000));
-    }
+```rust
+#[test]
+fn long_sequence() {
+    assert!(!all(0.., |x| x < 1_000_000));
+}
+```
 
 This fails on my machine, but if it runs fine on yours then it's always
 possible to make it crash just by increasing the cut-off number (or removing it

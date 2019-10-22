@@ -70,25 +70,29 @@ We can emit those immediately after and then enter an infinite loop where we
 calculate the next item by adding the two previous items, emit the new item and
 then update our values for the two previous items of the sequence.
 
-    def fibonacci():
-        a = 1
-        b = 1
-        yield a
-        yield b
-        while True:
-            c = a + b
-            yield c
-            a = b
-            b = c
+```python
+def fibonacci():
+    a = 1
+    b = 1
+    yield a
+    yield b
+    while True:
+        c = a + b
+        yield c
+        a = b
+        b = c
+```
 
 We can then use it to create a generator object, get the first 10 items using
 `itertools.islice` and print them.
 
-    from itertools import islice
+```python
+from itertools import islice
 
-    fs = fibonacci()
-    for f in islice(fs, 10):
-        print(f)
+fs = fibonacci()
+for f in islice(fs, 10):
+    print(f)
+```
 
 There is more to say about generator functions in Python, including `yield from`
 and sending values back to the generator using the `.send()` method, but this
@@ -108,21 +112,23 @@ Lastly, there's no need to check factors larger than the square root of the
 candidate - for every factor greater than the square root there will be one
 that is less.
 
-    from itertools import count
+```python
+from itertools import count
 
-    def primes_trial_division():
-        primes = []
-        for candidate in count(2):
-            factor_found = False
-            for p in primes:
-                if candidate % p == 0:
-                    factor_found = True
-                    break
-                elif p * p > candidate:
-                    break
-            if not factor_found:
-                yield candidate
-                primes.append(candidate)
+def primes_trial_division():
+    primes = []
+    for candidate in count(2):
+        factor_found = False
+        for p in primes:
+            if candidate % p == 0:
+                factor_found = True
+                break
+            elif p * p > candidate:
+                break
+        if not factor_found:
+            yield candidate
+            primes.append(candidate)
+```
 
 Here we start with an empty list of primes and using `itertools.count` start
 counting up starting with 2. We could add 2 to the initial list of primes and
@@ -162,18 +168,20 @@ numbers and the key of such list is the number that is the next one divisible
 by the primes in the list. In other words, it maps from numbers to their prime
 factors. This map starts out empty as we don't know any prime numbers yet.
 
-    from itertools import count
+```python
+from itertools import count
 
-    def primes_lazy_sieve():
-        multiples = {}
-        for candidate in count(2):
-            candidate_divisors = multiples.pop(candidate, None)
-            if candidate_divisors is None:
-                yield candidate
-                multiples[candidate * candidate] = [candidate]
-            else:
-                for divisor in candidate_divisors:
-                    multiples.setdefault(candidate + divisor, []).append(divisor)
+def primes_lazy_sieve():
+    multiples = {}
+    for candidate in count(2):
+        candidate_divisors = multiples.pop(candidate, None)
+        if candidate_divisors is None:
+            yield candidate
+            multiples[candidate * candidate] = [candidate]
+        else:
+            for divisor in candidate_divisors:
+                multiples.setdefault(candidate + divisor, []).append(divisor)
+```
 
 We again generate our candidates by counting up from 2 and we look up the
 candidate in the map. If the map does not contain the candidate (as in there
