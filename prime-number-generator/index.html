@@ -163,25 +163,25 @@ We can emit those immediately after and then enter an infinite loop where we
 calculate the next item by adding the two previous items, emit the new item and
 then update our values for the two previous items of the sequence.</p>
 <pre style="background-color:#002b36;">
-<span style="color:#839496;">def fibonacci():
-</span><span style="color:#839496;">    a = 1
-</span><span style="color:#839496;">    b = 1
-</span><span style="color:#839496;">    yield a
-</span><span style="color:#839496;">    yield b
-</span><span style="color:#839496;">    while True:
-</span><span style="color:#839496;">        c = a + b
-</span><span style="color:#839496;">        yield c
-</span><span style="color:#839496;">        a = b
-</span><span style="color:#839496;">        b = c
+<span style="color:#859900;">def </span><span style="color:#b58900;">fibonacci</span><span style="color:#839496;">():
+    a </span><span style="color:#657b83;">= </span><span style="color:#6c71c4;">1
+    </span><span style="color:#839496;">b </span><span style="color:#657b83;">= </span><span style="color:#6c71c4;">1
+    </span><span style="color:#859900;">yield </span><span style="color:#839496;">a
+    </span><span style="color:#859900;">yield </span><span style="color:#839496;">b
+    </span><span style="color:#859900;">while </span><span style="color:#b58900;">True</span><span style="color:#839496;">:
+        c </span><span style="color:#657b83;">= </span><span style="color:#839496;">a </span><span style="color:#657b83;">+ </span><span style="color:#839496;">b
+        </span><span style="color:#859900;">yield </span><span style="color:#839496;">c
+        a </span><span style="color:#657b83;">= </span><span style="color:#839496;">b
+        b </span><span style="color:#657b83;">= </span><span style="color:#839496;">c
 </span></pre>
 <p>We can then use it to create a generator object, get the first 10 items using
 <code>itertools.islice</code> and print them.</p>
 <pre style="background-color:#002b36;">
-<span style="color:#839496;">from itertools import islice
+<span style="color:#cb4b16;">from </span><span style="color:#839496;">itertools </span><span style="color:#cb4b16;">import </span><span style="color:#839496;">islice
 
-</span><span style="color:#839496;">fs = fibonacci()
-</span><span style="color:#839496;">for f in islice(fs, 10):
-</span><span style="color:#839496;">    print(f)
+fs </span><span style="color:#657b83;">= </span><span style="color:#268bd2;">fibonacci</span><span style="color:#839496;">()
+</span><span style="color:#859900;">for </span><span style="color:#839496;">f </span><span style="color:#859900;">in </span><span style="color:#268bd2;">islice</span><span style="color:#839496;">(fs, </span><span style="color:#6c71c4;">10</span><span style="color:#839496;">):
+    </span><span style="color:#859900;">print</span><span style="color:#839496;">(f)
 </span></pre>
 <p>There is more to say about generator functions in Python, including <code>yield from</code>
 and sending values back to the generator using the <code>.send()</code> method, but this
@@ -199,21 +199,21 @@ Lastly, there's no need to check factors larger than the square root of the
 candidate - for every factor greater than the square root there will be one
 that is less.</p>
 <pre style="background-color:#002b36;">
-<span style="color:#839496;">from itertools import count
+<span style="color:#cb4b16;">from </span><span style="color:#839496;">itertools </span><span style="color:#cb4b16;">import </span><span style="color:#839496;">count
 
-</span><span style="color:#839496;">def primes_trial_division():
-</span><span style="color:#839496;">    primes = []
-</span><span style="color:#839496;">    for candidate in count(2):
-</span><span style="color:#839496;">        factor_found = False
-</span><span style="color:#839496;">        for p in primes:
-</span><span style="color:#839496;">            if candidate % p == 0:
-</span><span style="color:#839496;">                factor_found = True
-</span><span style="color:#839496;">                break
-</span><span style="color:#839496;">            elif p * p &gt; candidate:
-</span><span style="color:#839496;">                break
-</span><span style="color:#839496;">        if not factor_found:
-</span><span style="color:#839496;">            yield candidate
-</span><span style="color:#839496;">            primes.append(candidate)
+</span><span style="color:#859900;">def </span><span style="color:#b58900;">primes_trial_division</span><span style="color:#839496;">():
+    primes </span><span style="color:#657b83;">= </span><span style="color:#839496;">[]
+    </span><span style="color:#859900;">for </span><span style="color:#839496;">candidate </span><span style="color:#859900;">in </span><span style="color:#268bd2;">count</span><span style="color:#839496;">(</span><span style="color:#6c71c4;">2</span><span style="color:#839496;">):
+        factor_found </span><span style="color:#657b83;">= </span><span style="color:#b58900;">False
+        </span><span style="color:#859900;">for </span><span style="color:#839496;">p </span><span style="color:#859900;">in </span><span style="color:#839496;">primes:
+            </span><span style="color:#859900;">if </span><span style="color:#839496;">candidate </span><span style="color:#657b83;">% </span><span style="color:#839496;">p </span><span style="color:#657b83;">== </span><span style="color:#6c71c4;">0</span><span style="color:#839496;">:
+                factor_found </span><span style="color:#657b83;">= </span><span style="color:#b58900;">True
+                </span><span style="color:#859900;">break
+            elif </span><span style="color:#839496;">p </span><span style="color:#657b83;">* </span><span style="color:#839496;">p </span><span style="color:#657b83;">&gt; </span><span style="color:#839496;">candidate:
+                </span><span style="color:#859900;">break
+        if not </span><span style="color:#839496;">factor_found:
+            </span><span style="color:#859900;">yield </span><span style="color:#839496;">candidate
+            primes.</span><span style="color:#268bd2;">append</span><span style="color:#839496;">(candidate)
 </span></pre>
 <p>Here we start with an empty list of primes and using <code>itertools.count</code> start
 counting up starting with 2. We could add 2 to the initial list of primes and
@@ -248,18 +248,18 @@ numbers and the key of such list is the number that is the next one divisible
 by the primes in the list. In other words, it maps from numbers to their prime
 factors. This map starts out empty as we don't know any prime numbers yet.</p>
 <pre style="background-color:#002b36;">
-<span style="color:#839496;">from itertools import count
+<span style="color:#cb4b16;">from </span><span style="color:#839496;">itertools </span><span style="color:#cb4b16;">import </span><span style="color:#839496;">count
 
-</span><span style="color:#839496;">def primes_lazy_sieve():
-</span><span style="color:#839496;">    multiples = {}
-</span><span style="color:#839496;">    for candidate in count(2):
-</span><span style="color:#839496;">        candidate_divisors = multiples.pop(candidate, None)
-</span><span style="color:#839496;">        if candidate_divisors is None:
-</span><span style="color:#839496;">            yield candidate
-</span><span style="color:#839496;">            multiples[candidate * candidate] = [candidate]
-</span><span style="color:#839496;">        else:
-</span><span style="color:#839496;">            for divisor in candidate_divisors:
-</span><span style="color:#839496;">                multiples.setdefault(candidate + divisor, []).append(divisor)
+</span><span style="color:#859900;">def </span><span style="color:#b58900;">primes_lazy_sieve</span><span style="color:#839496;">():
+    multiples </span><span style="color:#657b83;">= </span><span style="color:#839496;">{}
+    </span><span style="color:#859900;">for </span><span style="color:#839496;">candidate </span><span style="color:#859900;">in </span><span style="color:#268bd2;">count</span><span style="color:#839496;">(</span><span style="color:#6c71c4;">2</span><span style="color:#839496;">):
+        candidate_divisors </span><span style="color:#657b83;">= </span><span style="color:#839496;">multiples.</span><span style="color:#268bd2;">pop</span><span style="color:#839496;">(candidate, </span><span style="color:#b58900;">None</span><span style="color:#839496;">)
+        </span><span style="color:#859900;">if </span><span style="color:#839496;">candidate_divisors </span><span style="color:#859900;">is </span><span style="color:#b58900;">None</span><span style="color:#839496;">:
+            </span><span style="color:#859900;">yield </span><span style="color:#839496;">candidate
+            multiples[candidate </span><span style="color:#657b83;">* </span><span style="color:#839496;">candidate] </span><span style="color:#657b83;">= </span><span style="color:#839496;">[candidate]
+        </span><span style="color:#859900;">else</span><span style="color:#839496;">:
+            </span><span style="color:#859900;">for </span><span style="color:#839496;">divisor </span><span style="color:#859900;">in </span><span style="color:#839496;">candidate_divisors:
+                multiples.</span><span style="color:#268bd2;">setdefault</span><span style="color:#839496;">(candidate </span><span style="color:#657b83;">+ </span><span style="color:#839496;">divisor, []).</span><span style="color:#268bd2;">append</span><span style="color:#839496;">(divisor)
 </span></pre>
 <p>We again generate our candidates by counting up from 2 and we look up the
 candidate in the map. If the map does not contain the candidate (as in there
