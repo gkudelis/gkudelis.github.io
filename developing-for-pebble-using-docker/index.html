@@ -150,16 +150,16 @@ connected your Pebble to the app you'll need to follow the directions for
 it on the watch. A nice example is <a href="https://github.com/pebble-examples/simple-analog/">the simple-analog
 watchface</a>. To clone it run</p>
 <pre style="background-color:#002b36;">
-<span style="color:#839496;">git clone https://github.com/pebble-examples/simple-analog.git
+<span style="color:#268bd2;">git</span><span style="color:#839496;"> clone https://github.com/pebble-examples/simple-analog.git
 </span></pre>
 <p>Enter the project folder, then build the app:</p>
 <pre style="background-color:#002b36;">
-<span style="color:#839496;">docker run --rm -it -v $PWD:/pebble andredumas/pebble-dev build
+<span style="color:#268bd2;">docker</span><span style="color:#839496;"> run</span><span style="color:#268bd2;"> --rm -it -v </span><span style="color:#859900;">$</span><span style="color:#268bd2;">PWD</span><span style="color:#839496;">:/pebble andredumas/pebble-dev build
 </span></pre>
 <p>If all went well (I get some Python errors, but the build still gets completed)
 take the IP shown in Developer Connection and install the app on your Pebble:</p>
 <pre style="background-color:#002b36;">
-<span style="color:#839496;">docker run --rm -it -v $PWD:/pebble andredumas/pebble-dev install --phone=192.168.0.1
+<span style="color:#268bd2;">docker</span><span style="color:#839496;"> run</span><span style="color:#268bd2;"> --rm -it -v </span><span style="color:#859900;">$</span><span style="color:#268bd2;">PWD</span><span style="color:#839496;">:/pebble andredumas/pebble-dev install</span><span style="color:#268bd2;"> --phone</span><span style="color:#657b83;">=</span><span style="color:#839496;">192.168.0.1
 </span></pre>
 <p>This will install the watchface on your Pebble and it should become the current
 watchface. You can follow exactly the same process to build and install apps.</p>

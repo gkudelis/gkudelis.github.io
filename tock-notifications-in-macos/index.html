@@ -124,12 +124,12 @@ ASCII art countdown in your terminal window and lets you pause it using the
 space key. You can also add a suffix to signify hours or minutes. I am calling
 it as</p>
 <pre style="background-color:#002b36;">
-<span style="color:#839496;">termdown 45m
+<span style="color:#268bd2;">termdown</span><span style="color:#839496;"> 45m
 </span></pre>
 <p>When the time runs out <code>termdown</code> simply exits, so I was combining it with
 <code>terminal-notifier</code> like this:</p>
 <pre style="background-color:#002b36;">
-<span style="color:#839496;">termdown 45m &amp;&amp; terminal-notifier -title &quot;Tock&quot; -message &quot;Your tock is over&quot;
+<span style="color:#268bd2;">termdown</span><span style="color:#839496;"> 45m </span><span style="color:#859900;">&amp;&amp; </span><span style="color:#268bd2;">terminal-notifier -title </span><span style="color:#839496;">&quot;</span><span style="color:#2aa198;">Tock</span><span style="color:#839496;">&quot;</span><span style="color:#268bd2;"> -message </span><span style="color:#839496;">&quot;</span><span style="color:#2aa198;">Your tock is over</span><span style="color:#839496;">&quot;
 </span></pre>
 <p>This is great, but the alert simply disappears after a couple of seconds. What
 if I miss it? After all, sometimes when I'm not typing or reading I'm not just
@@ -140,7 +140,7 @@ that. In the README it suggests using
 functionality. Calling <code>alerter</code> with the same arguments as <code>terminal-notifier</code>
 gives me exactly what I want and now I'm using this:</p>
 <pre style="background-color:#002b36;">
-<span style="color:#839496;">termdown 45m &amp;&amp; alerter -title &quot;Tock&quot; -message &quot;Your tock is over&quot;
+<span style="color:#268bd2;">termdown</span><span style="color:#839496;"> 45m </span><span style="color:#859900;">&amp;&amp; </span><span style="color:#268bd2;">alerter -title </span><span style="color:#839496;">&quot;</span><span style="color:#2aa198;">Tock</span><span style="color:#839496;">&quot;</span><span style="color:#268bd2;"> -message </span><span style="color:#839496;">&quot;</span><span style="color:#2aa198;">Your tock is over</span><span style="color:#839496;">&quot;
 </span></pre>
 <p>This works well, gives me a nice countdown and I'm sure to notice the alert as
 it sticks around until I close it. No need to disturb my library neighbors!</p>
