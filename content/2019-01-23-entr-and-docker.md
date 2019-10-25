@@ -10,9 +10,9 @@ Lately I've found myself using Docker more and more. There's something quite
 intoxicating about quick and easy creation of identical environments and the
 portability that comes from it. However, for me that often looks as vim in
 one tmux pane and a shell in another where I run something like
-
-    docker run --rm -it $(docker build -q .)
-
+```sh
+docker run --rm -it $(docker build -q .)
+```
 then look at the running application, change something, switch back into the
 shell window, kill Docker, run same command again. This is pretty tedious and
 there's no reason it can't be automated.
@@ -27,9 +27,9 @@ as a command line argument. When it notices that any of the files has changed
 it runs the given command. For example, if you're working on a Python project
 and you want to clear the screen (passing the `-c` flag to entr makes it clear
 the screen) and re-run tests any time you make changes you might run it as
-
-    ag -l | entr -c python -m unittest
-
+```sh
+ag -l | entr -c python -m unittest
+```
 Here, ag is responsible for finding interesting files for entr to watch. You
 could use find, but ag pays attention to your .gitignore and has some other
 useful defaults. Note however that this wouldn't detect and start tracking
@@ -40,22 +40,22 @@ it's not the responsibility of entr to figure out which files it should track.
 The intended way to use this functionality is by wrapping both commands in a
 shell while-true loop, this way the file listing command is used to tell entr
 which of the new files it's supposed to be tracking.
-
-    while sleep 1; do
-    ag -l | entr -cd python -m unittest
-    done
-
+```sh
+while sleep 1; do
+ag -l | entr -cd python -m unittest
+done
+```
 So can we use a similar setup to build and run a Docker container? Of course!
 If your container runs some tests and exits or does some other task that
 quickly finishes the only change you have to do is wrap the `docker` command in
 an `sh -c` or if you're using an up to date version of entr you can use the
 `-s` flag which effectively does the same (my distribution shipped version 3.4
 and the `-s` flag was not available).
-
-    while sleep 1; do
-    ag -l | entr -cds 'docker run --rm $(docker build -q .)'
-    done
-
+```sh
+while sleep 1; do
+ag -l | entr -cds 'docker run --rm $(docker build -q .)'
+done
+```
 Note that whether you're using the `-s` flag or the `sh -c` technique the
 command now needs to be quoted to avoid premature shell variable expansion.
 
@@ -80,11 +80,11 @@ the application so that the init manager runs as PID 1 and executes your
 application as a different PID. It also knows how to handle different signals,
 making it behave as entr would expect. To run your application in a container
 using the init manager you can use
-
-    while sleep 1; do
-    ag -l | entr -cdrs 'docker run --rm --init $(docker build -q .)'
-    done
-
+```sh
+while sleep 1; do
+ag -l | entr -cdrs 'docker run --rm --init $(docker build -q .)'
+done
+```
 This allows you to have your application built and executed in a container
 whenever any changes are made without the developer having to restart it
 manually making it a very nice and slick development experience.

@@ -69,7 +69,6 @@ sequence and set them both to 1 as we know those are the first two items.
 We can emit those immediately after and then enter an infinite loop where we
 calculate the next item by adding the two previous items, emit the new item and
 then update our values for the two previous items of the sequence.
-
 ```python
 def fibonacci():
     a = 1
@@ -82,10 +81,8 @@ def fibonacci():
         a = b
         b = c
 ```
-
 We can then use it to create a generator object, get the first 10 items using
 `itertools.islice` and print them.
-
 ```python
 from itertools import islice
 
@@ -93,7 +90,6 @@ fs = fibonacci()
 for f in islice(fs, 10):
     print(f)
 ```
-
 There is more to say about generator functions in Python, including `yield from`
 and sending values back to the generator using the `.send()` method, but this
 will be enough to cover the basics required for the rest of the article.
@@ -111,7 +107,6 @@ then it's much faster to only check the current candidate for prime factors.
 Lastly, there's no need to check factors larger than the square root of the
 candidate - for every factor greater than the square root there will be one
 that is less.
-
 ```python
 from itertools import count
 
@@ -129,7 +124,6 @@ def primes_trial_division():
             yield candidate
             primes.append(candidate)
 ```
-
 Here we start with an empty list of primes and using `itertools.count` start
 counting up starting with 2. We could add 2 to the initial list of primes and
 count up from 3 with a step of 2 and it would create a performance boost.
@@ -167,7 +161,6 @@ The algorithm keeps a map where the values are (maybe empty) lists of prime
 numbers and the key of such list is the number that is the next one divisible
 by the primes in the list. In other words, it maps from numbers to their prime
 factors. This map starts out empty as we don't know any prime numbers yet.
-
 ```python
 from itertools import count
 
@@ -182,7 +175,6 @@ def primes_lazy_sieve():
             for divisor in candidate_divisors:
                 multiples.setdefault(candidate + divisor, []).append(divisor)
 ```
-
 We again generate our candidates by counting up from 2 and we look up the
 candidate in the map. If the map does not contain the candidate (as in there
 is no such key) it means that it is a prime number (it does not have any prime

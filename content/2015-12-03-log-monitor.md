@@ -41,21 +41,21 @@ difference was that I did not want to use SSL for client authentication. That
 allows me to skip having to generate certificates for every client.
 
 First step is generating the server key and certificate:
-```
+```sh
 openssl genrsa -out rtail-server.key 1024
 ```
 Next create a self-signed certificate:
-```
+```sh
 openssl req -new -key rtail-server.key -x509 -days 3653 -out rtail-server.crt
 ```
 You can safely ignore all the prompts by hitting enter. The next step is
 generating the .pem file:
-```
+```sh
 cat rtail-server.key rtail-server.crt >rtail-server.pem
 ```
 The .key and .pem files must remain secret. It's a good idea to make them only
 readable by you:
-```
+```sh
 chmod 600 rtail-server.key rtail-server.pem
 ```
 The .pem file is used on the `rtail` server and the .crt is used by every
@@ -69,7 +69,7 @@ went smoothly. For the sake of argument let's say that we'll be using port
 5333 for the SSL connection.
 
 First you have to set up the server end of the SSL connection:
-```
+```sh
 socat OPENSSL-LISTEN:5333,fork,reuseaddr,cert=/path/to/srv-rtail.pem,verify=0 STDIO
 ```
 Here we're telling `socat` we want it to fork for every new client (which means
@@ -77,7 +77,7 @@ we can send multiple streams to it at the same time), to authenticate itself
 using the .pem file we generated previously and to not authenticate clients.
 We connect the stream to STDIO for debugging purposes, but later it will be
 pointing at the local `rtail` server. On the client side we run the client version:
-```
+```sh
 socat STDIO OPENSSL:my.rtail.server.com:5333,cafile=/path/to/srv-rtail.crt
 ```
 We're making `socat` listen to the STDIO on the client side (which will later
@@ -95,19 +95,19 @@ these packets on the client end and reproduce them on the server end. The only
 change to the above `socat` setup we replace STDIO with the corresponding UDP
 setup. Let's say we're using the port 5700 for `rtail` UDP communication. On
 the server this becomes:
-```
+```sh
 socat OPENSSL-LISTEN:5333,fork,reuseaddr,cert=/path/to/srv-rtail.pem,verify=0 UDP:localhost:5700
 ```
 And on the client side:
-```
+```sh
 socat UDP-LISTEN:5700 OPENSSL:my.rtail.server.com:5333,cafile=/path/to/srv-rtail.crt
 ```
 To set up `rtail` we need to run the client pointing it to the 5333 UDP port:
-```
+```sh
 rtail --port 5700 --id my-stream-name
 ```
 and on the server:
-```
+```sh
 rtail-server --web-port 5700 --udp-port 5700
 ```
 The id on the client side simply helps identify the stream on the web interface. 
@@ -118,7 +118,7 @@ stream called "my-stream-name". If you can't see the web interface or nothing
 comes through double check the firewall settings.
 
 You can now pipe your log files into the `rtail` client from `tail`:
-```
+```sh
 tail -F /some/log/file | rtail --port 5700 --id some-log-file-stream
 ```
 
@@ -132,7 +132,7 @@ manage these processes.
 On the client side we need to run the `socat` instance and as many `rtail`
 clients as we need. For one client the configuration would look something like
 this:
-```
+```ini
 [program:rtail-client-socat-relay]
 command = socat UDP-LISTEN:5700 OPENSSL:my.rtail.server.com:5333,cafile=/path/to/srv-rtail.crt
 autostart = true
@@ -155,7 +155,7 @@ being started first. The default is 999, so by setting the `socat` connection
 priority to 900 we make it start before `rtail`.
 
 On the server side we open the SSL connection and start the `rtail` server:
-```
+```ini
 [program:rtail-server]
 command = /usr/local/bin/rtail-server --web-port 5700 --udp-port 5700
 autostart = true
@@ -189,7 +189,7 @@ auth file: [How To Set Up HTTP Authentication With Nginx On Ubuntu 12.10](https:
 Below is the configuration I ended up with. There is nothing but the auth file
 in the `/avr/www/mydomain.com/rtail/` folder.
 
-```
+```config
 upstream rtail {
     server 127.0.0.1:5700;
 }
