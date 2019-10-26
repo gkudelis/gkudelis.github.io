@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="description" content="$title$">
+    <meta name="majestic-site-verification" content="MJ12_b7bc5078-8873-4f6e-a61b-6a108fa148fe">
+
+    <title>Blog and Notes of Giedrius Kudelis - 
+    Tail Call Optimisation in Rust
+</title>
+
+    <!-- google web fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Josefin+Sans|Josefin+Slab:700' rel='stylesheet' type='text/css'>
+    <!-- bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc= sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+
+    <!-- blog css -->
+    <link rel="stylesheet" type="text/css" href="/css/default.css" />
+
+    <!-- MathJax for nice formulas -->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+
+    <!-- google analytics -->
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-71163958-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4 col-sm-push-8">
+                <a href="/"><h1>gkudelis.net</h1></a>
+
+                <h3>Posts</h3>
+                
+                
+                <ul class="post-list">
+    
+    <li>
+        <span class="date">2019-10-26</span>
+        <a href="http:&#x2F;&#x2F;gkudelis.net&#x2F;tail-call-optimisation-in-rust">Tail Call Optimisation in Rust</a>
+    </li>
+    
+    <li>
+        <span class="date">2019-05-09</span>
+        <a href="http:&#x2F;&#x2F;gkudelis.net&#x2F;developing-for-pebble-using-docker">Developing for Pebble using Docker</a>
+    </li>
+    
+    <li>
+        <span class="date">2019-04-03</span>
+        <a href="http:&#x2F;&#x2F;gkudelis.net&#x2F;tock-notifications-in-macos">Tock notifications in macOS</a>
+    </li>
+    
+    <li>
+        <span class="date">2019-02-27</span>
+        <a href="http:&#x2F;&#x2F;gkudelis.net&#x2F;prime-number-generator">Lazy prime number generator in Python</a>
+    </li>
+    
+    <li>
+        <span class="date">2019-01-23</span>
+        <a href="http:&#x2F;&#x2F;gkudelis.net&#x2F;entr-and-docker">Using entr and Docker together for development</a>
+    </li>
+    
+    <li>
+        <span class="date">2018-01-12</span>
+        <a href="http:&#x2F;&#x2F;gkudelis.net&#x2F;astonhack-drumhub">AstonHack 2016 and DrumHub</a>
+    </li>
+    
+    <li>
+        <span class="date">2016-03-06</span>
+        <a href="http:&#x2F;&#x2F;gkudelis.net&#x2F;dotfiles-in-git">Dotfiles in git</a>
+    </li>
+    
+    <li>
+        <span class="date">2015-12-08</span>
+        <a href="http:&#x2F;&#x2F;gkudelis.net&#x2F;google-analytics">Getting Google Analytics</a>
+    </li>
+    
+    <li>
+        <span class="date">2015-12-03</span>
+        <a href="http:&#x2F;&#x2F;gkudelis.net&#x2F;log-monitor">Log monitor using socat, rtail, nginx and supervisor</a>
+    </li>
+    
+    <li>
+        <span class="date">2015-11-03</span>
+        <a href="http:&#x2F;&#x2F;gkudelis.net&#x2F;first-post">First post</a>
+    </li>
+    
+</ul>
+
+            </div>
+            <div class="col-sm-8 col-sm-pull-4">
+                
+<div class="post">
+    <h2>Tail Call Optimisation in Rust</h2>
+    <p class="info">
+        Published: 2019-10-26
+        
+        <br>Tags:
+        
+        <a href="http:&#x2F;&#x2F;gkudelis.net&#x2F;tags&#x2F;rust&#x2F;">rust</a>, 
+        
+        <a href="http:&#x2F;&#x2F;gkudelis.net&#x2F;tags&#x2F;recursion&#x2F;">recursion</a>
+        
+    </p>
+    <p>When developing a recursive algorithm regardless of the language one of the
+issues you as a programmer have to consider is not causing a stack overflow.
+In some cases you might know that the recursion won't be that deep, but there
+are perfectly good algorithms that can be expressed in recursive form that
+can and will consume all of the stack memory and then cause a crash.</p>
+<p>There is a way to solve this - by rewriting the algorithm so that the recursive
+call is the last instruction in the function and the result of it is then
+returned unchanged you can execute this without adding a new stack frame. This
+is called tail call optimisation and if the language/compiler you're using
+supports it - you're in luck. Unfortunately, the Rust compiler doesn't support
+tail call optimisation in the general case. In this post I will be looking at
+how you can restructure your recursive functions using loops to avoid causing a
+stack overflow and why this is effectively the same as performing tail call
+optimisation.</p>
+<h3 id="a-simple-recursive-algorithm">A simple recursive algorithm</h3>
+<p>First we'll need a simple and common recursive algorithm to use as an example.
+One of the easiest things that make sense to implement recursively is the <code>all</code>
+function that takes an iterator and a predicate function and checks that all
+the items in the iterator match the predicate.</p>
+<pre style="background-color:#002b36;">
+<span style="color:#268bd2;">fn </span><span style="color:#b58900;">all</span><span style="color:#839496;">&lt;I, P&gt;(</span><span style="color:#859900;">mut </span><span style="color:#268bd2;">items</span><span style="color:#839496;">: I, </span><span style="color:#268bd2;">predicate</span><span style="color:#839496;">: P) -&gt; </span><span style="color:#268bd2;">bool
+</span><span style="color:#859900;">where</span><span style="color:#839496;">
+    I: Iterator,
+    P: Fn(</span><span style="color:#268bd2;">I::</span><span style="color:#839496;">Item) -&gt; </span><span style="color:#268bd2;">bool</span><span style="color:#839496;">,
+{
+    unimplemented!()
+}
+</span></pre>
+<p>The recursive implementation of <code>all</code> is simple - if the predicate is false for
+the next item of the iterator then <code>all</code> should return false. If it is true
+then we need to repeat the same action on the rest of the iterator until the
+iterator is empty, at which point we can say that the predicate is true for
+all the items.</p>
+<pre style="background-color:#002b36;">
+<span style="color:#268bd2;">fn </span><span style="color:#b58900;">all</span><span style="color:#839496;">&lt;I, P&gt;(</span><span style="color:#859900;">mut </span><span style="color:#268bd2;">items</span><span style="color:#839496;">: I, </span><span style="color:#268bd2;">predicate</span><span style="color:#839496;">: P) -&gt; </span><span style="color:#268bd2;">bool
+</span><span style="color:#859900;">where</span><span style="color:#839496;">
+    I: Iterator,
+    P: Fn(</span><span style="color:#268bd2;">I::</span><span style="color:#839496;">Item) -&gt; </span><span style="color:#268bd2;">bool</span><span style="color:#839496;">,
+{
+    </span><span style="color:#859900;">match</span><span style="color:#839496;"> items.</span><span style="color:#859900;">next</span><span style="color:#839496;">() {
+        </span><span style="color:#859900;">Some</span><span style="color:#839496;">(item) </span><span style="color:#859900;">=&gt; </span><span style="color:#839496;">{
+            </span><span style="color:#859900;">if predicate</span><span style="color:#839496;">(item) {
+                </span><span style="color:#859900;">all</span><span style="color:#839496;">(items, predicate)
+            } </span><span style="color:#859900;">else </span><span style="color:#839496;">{
+                </span><span style="color:#b58900;">false
+            </span><span style="color:#839496;">}
+        }
+        </span><span style="color:#859900;">None =&gt; </span><span style="color:#b58900;">true</span><span style="color:#839496;">,
+    }
+}
+</span></pre>
+<p>It is clear that in this case <code>all</code> could take advantage of tail-call
+optimisation as the result of the recursive call is returned as-is.</p>
+<p>So what's the issue here? Let's say we want to test a very long (potentially
+infinite) sequence. Every time <code>all</code> calls itself it creates a stack frame that
+consumes memory. Eventually, that leads to a stack overflow. A quick test to
+show it failing:</p>
+<pre style="background-color:#002b36;">
+<span style="color:#839496;">#[</span><span style="color:#268bd2;">test</span><span style="color:#839496;">]
+</span><span style="color:#268bd2;">fn </span><span style="color:#b58900;">long_sequence</span><span style="color:#839496;">() {
+    assert!(</span><span style="color:#859900;">!all</span><span style="color:#839496;">(</span><span style="color:#6c71c4;">0</span><span style="color:#859900;">..</span><span style="color:#839496;">, |</span><span style="color:#268bd2;">x</span><span style="color:#839496;">| x </span><span style="color:#859900;">&lt; </span><span style="color:#6c71c4;">1_000_000</span><span style="color:#839496;">));
+}
+</span></pre>
+<p>This fails on my machine, but if it runs fine on yours then it's always
+possible to make it crash just by increasing the cut-off number (or removing it
+altogether and making the closure always return true).</p>
+<h3 id="tail-call-optimisation-using-loop">Tail call optimisation using <code>loop</code></h3>
+<p>Let's see what we can do to fix this. In case of <code>all</code> the solution is quite
+obvious - we can rewrite it using a loop. We can simply loop until the iterator
+is exhausted or we find an item where the predicate is false. To make it clear
+how this maps to the recursive style let's change the <code>match</code> in the first
+version to a <code>break match</code> and wrap it inside a <code>loop</code>. That way if the selected
+<code>match</code> branch returns a value we break out of the loop and return from
+our function. If on the other hand it would make a recursive call we can
+instead simply modify the state and use <code>continue</code> to start a new iteration
+of the loop. When rewriting a recursive function to use a loop this is key -
+instead of passing modified arguments to a recursive call we change the state
+and start a new iteration of the loop.</p>
+<p>In the case of our <code>all</code> function we don't need to modify the state explicitly,
+this is done for us by the <code>next</code> method. If the predicate is true we move
+on to the next iteration using <code>continue</code> and if it's false we simply return
+<code>false</code>, which breaks the loop and is used as the return value of the function.</p>
+<pre style="background-color:#002b36;">
+<span style="color:#859900;">pub </span><span style="color:#268bd2;">fn </span><span style="color:#b58900;">all</span><span style="color:#839496;">&lt;I, P&gt;(</span><span style="color:#859900;">mut </span><span style="color:#268bd2;">items</span><span style="color:#839496;">: I, </span><span style="color:#268bd2;">predicate</span><span style="color:#839496;">: P) -&gt; </span><span style="color:#268bd2;">bool
+</span><span style="color:#859900;">where</span><span style="color:#839496;">
+    I: Iterator,
+    P: Fn(</span><span style="color:#268bd2;">I::</span><span style="color:#839496;">Item) -&gt; </span><span style="color:#268bd2;">bool</span><span style="color:#839496;">,
+{
+    </span><span style="color:#859900;">loop </span><span style="color:#839496;">{
+        </span><span style="color:#859900;">break match</span><span style="color:#839496;"> items.</span><span style="color:#859900;">next</span><span style="color:#839496;">() {
+            </span><span style="color:#859900;">Some</span><span style="color:#839496;">(item) </span><span style="color:#859900;">=&gt; </span><span style="color:#839496;">{
+                </span><span style="color:#859900;">if predicate</span><span style="color:#839496;">(item) {
+                    </span><span style="color:#859900;">continue</span><span style="color:#839496;">;
+                } </span><span style="color:#859900;">else </span><span style="color:#839496;">{
+                    </span><span style="color:#b58900;">false
+                </span><span style="color:#839496;">}
+            }
+            </span><span style="color:#859900;">None =&gt; </span><span style="color:#b58900;">true</span><span style="color:#839496;">,
+        };
+    }
+}
+</span></pre>
+<p>If you try running the <code>long_sequence</code> test again you'll see that it no longer
+fails. However, <code>continue</code> is not often used and I feel that many people are
+more used to using <code>break</code> statements. We can rewrite the same tail-call
+optimised function by switching back from <code>break match</code> to a regular <code>match</code> -
+this way simply returning a value in a <code>match</code> branch does nothing, the loop
+continues. Instead we need to use a <code>break</code> statement to return a value from
+the loop and from our functions. The <code>continue</code> statement is no longer needed
+as the default behavior is to continue with the loop.</p>
+<pre style="background-color:#002b36;">
+<span style="color:#859900;">pub </span><span style="color:#268bd2;">fn </span><span style="color:#b58900;">all</span><span style="color:#839496;">&lt;I, P&gt;(</span><span style="color:#859900;">mut </span><span style="color:#268bd2;">items</span><span style="color:#839496;">: I, </span><span style="color:#268bd2;">predicate</span><span style="color:#839496;">: P) -&gt; </span><span style="color:#268bd2;">bool
+</span><span style="color:#859900;">where</span><span style="color:#839496;">
+    I: Iterator,
+    P: Fn(</span><span style="color:#268bd2;">I::</span><span style="color:#839496;">Item) -&gt; </span><span style="color:#268bd2;">bool</span><span style="color:#839496;">,
+{
+    </span><span style="color:#859900;">loop </span><span style="color:#839496;">{
+        </span><span style="color:#859900;">match</span><span style="color:#839496;"> items.</span><span style="color:#859900;">next</span><span style="color:#839496;">() {
+            </span><span style="color:#859900;">Some</span><span style="color:#839496;">(item) </span><span style="color:#859900;">=&gt; </span><span style="color:#839496;">{
+                </span><span style="color:#859900;">if !predicate</span><span style="color:#839496;">(item) {
+                    </span><span style="color:#859900;">break </span><span style="color:#b58900;">false</span><span style="color:#839496;">;
+                }
+            }
+            </span><span style="color:#859900;">None =&gt; break </span><span style="color:#b58900;">true</span><span style="color:#839496;">,
+        };
+    }
+}
+</span></pre>
+<p>Note that since the <code>None</code> branch of the <code>match</code> is of unit type we also don't
+need the if to return any value either. This way we can get rid of one of the
+branches and only keep the one with the <code>break</code> statement.</p>
+<h3 id="short-circuiting-logic-operators">Short-circuiting logic operators</h3>
+<p>While this works, we can do away with the <code>if</code> statement - in Rust both <code>||</code>
+and <code>&amp;&amp;</code> operators are short-circuiting, so we can use them as simple forms of
+flow control. In this case we want to <code>break false</code> when the predicate is false
+for the current item, so we can instead write:</p>
+<pre style="background-color:#002b36;">
+<span style="color:#859900;">pub </span><span style="color:#268bd2;">fn </span><span style="color:#b58900;">all</span><span style="color:#839496;">&lt;I, P&gt;(</span><span style="color:#859900;">mut </span><span style="color:#268bd2;">items</span><span style="color:#839496;">: I, </span><span style="color:#268bd2;">predicate</span><span style="color:#839496;">: P) -&gt; </span><span style="color:#268bd2;">bool
+</span><span style="color:#859900;">where</span><span style="color:#839496;">
+    I: Iterator,
+    P: Fn(</span><span style="color:#268bd2;">I::</span><span style="color:#839496;">Item) -&gt; </span><span style="color:#268bd2;">bool</span><span style="color:#839496;">,
+{
+    </span><span style="color:#859900;">loop </span><span style="color:#839496;">{
+        </span><span style="color:#859900;">match</span><span style="color:#839496;"> items.</span><span style="color:#859900;">next</span><span style="color:#839496;">() {
+            </span><span style="color:#859900;">Some</span><span style="color:#839496;">(item) </span><span style="color:#859900;">=&gt; predicate</span><span style="color:#839496;">(item) </span><span style="color:#859900;">|| break </span><span style="color:#b58900;">false</span><span style="color:#839496;">,
+            </span><span style="color:#859900;">None =&gt; break </span><span style="color:#b58900;">true</span><span style="color:#839496;">,
+        };
+    }
+}
+</span></pre>
+<p>This looks much nicer and also more compact. But remember that we started by
+using <code>continue</code> instead of <code>break</code>? We can use it in a similar fashion, but
+since we only want to <code>continue</code> if the predicate is true we have to use <code>&amp;&amp;</code>
+instead.</p>
+<pre style="background-color:#002b36;">
+<span style="color:#859900;">pub </span><span style="color:#268bd2;">fn </span><span style="color:#b58900;">all</span><span style="color:#839496;">&lt;I, P&gt;(</span><span style="color:#859900;">mut </span><span style="color:#268bd2;">items</span><span style="color:#839496;">: I, </span><span style="color:#268bd2;">predicate</span><span style="color:#839496;">: P) -&gt; </span><span style="color:#268bd2;">bool
+</span><span style="color:#859900;">where</span><span style="color:#839496;">
+    I: Iterator,
+    P: Fn(</span><span style="color:#268bd2;">I::</span><span style="color:#839496;">Item) -&gt; </span><span style="color:#268bd2;">bool</span><span style="color:#839496;">,
+{
+    </span><span style="color:#859900;">loop </span><span style="color:#839496;">{
+        </span><span style="color:#859900;">break match</span><span style="color:#839496;"> items.</span><span style="color:#859900;">next</span><span style="color:#839496;">() {
+            </span><span style="color:#859900;">Some</span><span style="color:#839496;">(item) </span><span style="color:#859900;">=&gt; predicate</span><span style="color:#839496;">(item) </span><span style="color:#859900;">&amp;&amp; continue</span><span style="color:#839496;">,
+            </span><span style="color:#859900;">None =&gt; </span><span style="color:#b58900;">true</span><span style="color:#839496;">,
+        };
+    }
+}
+</span></pre>
+<p>This works just fine and passes the test, but I find the <code>&amp;&amp; continue</code> part
+a lot less obvious than the correspondig <code>|| break true</code>. Overall I think that
+while the <code>continue</code> style is helpful for understanding as the <code>continue</code>
+maps directly to a recursive call in code, the <code>break</code> style should normally be
+preferred.</p>
+<p>Hopefully I've convinced you that while having in-built tail call optimisation
+is nice it's really not that difficult to rewrite your recursive code using
+loops thus making it a little more robust. There is also a performance benefit
+and I'm planning to write another post about that, complete with some
+benchmarks!</p>
+
+</div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
