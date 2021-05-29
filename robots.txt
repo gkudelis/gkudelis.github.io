@@ -1,2 +1,2 @@
 User-agent: *
-Sitemap: http://gkudelis.net/sitemap.xml
+Sitemap: https://ekete.net/sitemap.xml
