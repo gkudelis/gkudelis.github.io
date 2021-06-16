@@ -1,5 +1,7 @@
-FROM alpine:3.10
+FROM debian:stable-slim
 
-COPY test.sh /test.sh
+RUN curl -L https://github.com/getzola/zola/releases/download/v0.9.0/zola-v0.9.0-x86_64-unknown-linux-gnu.tar.gz | tar xz -C /usr/bin
 
-ENTRYPOINT ["/test.sh"]
+COPY publish.sh /publish.sh
+
+ENTRYPOINT ["/publish.sh"]
