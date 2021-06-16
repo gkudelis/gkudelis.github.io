@@ -1,5 +1,5 @@
 FROM alpine:3.10
 
-COPY test.sh .
+COPY test.sh /test.sh
 
-ENTRYPOINT ["./test.sh"]
+ENTRYPOINT ["/test.sh"]
