@@ -8,4 +8,4 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build and publish
-        uses: .github/actions/publish
+        uses: ./.github/actions/publish
