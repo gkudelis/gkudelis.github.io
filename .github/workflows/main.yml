@@ -7,5 +7,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Build and publish
-        uses: ./.github/actions/publish
+      - name: Generate static pages
+        uses: ./.github/actions/zola
+      - name: Publish
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          deploy_key: ${{ secrets.DEPLOY_KEY }}
+          publish_dir: ./public
+          publish_branch: master
