@@ -1,0 +1,5 @@
+name: 'Publish'
+description: 'Generate and publish static pages content'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
